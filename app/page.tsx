@@ -1,442 +1,488 @@
 "use client";
 
-import { ChangeEvent, DragEvent, useMemo, useRef, useState } from "react";
-import type { OcrField, OcrResult } from "@/lib/types";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChatArrivalToast } from "@/components/ChatArrivalToast";
+import { DetailDataPanel } from "@/components/DetailDataPanel";
+import { ModeSelector } from "@/components/ModeSelector";
+import { MultiImageUploader } from "@/components/MultiImageUploader";
+import { ProcessStepper } from "@/components/ProcessStepper";
+import { ReportTemplateView } from "@/components/ReportTemplateView";
+import { SampleLauncher } from "@/components/SampleLauncher";
+import { ToolboxTemplateView } from "@/components/ToolboxTemplateView";
+import { WorkflowActions } from "@/components/WorkflowActions";
+import { SAMPLE_SETS } from "@/lib/samples";
+import type {
+  DemoMode,
+  DraftResult,
+  ImageSlot,
+  ReportDraft,
+  ReportHeader,
+  ReportSections,
+  ToolboxBriefing,
+  WorkflowStatus
+} from "@/lib/types";
+import { isReportDraft, isToolboxBriefing } from "@/lib/types";
 
-type ApiResult = OcrResult & {
-  meta?: {
-    filename: string;
-    mimeType: string;
-    size: number;
-  };
-};
+type ResultTab = "document" | "detail";
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const REPORT_REVEAL_TOTAL = 12;
+const TOOLBOX_REVEAL_TOTAL = 8;
 
 export default function Home() {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [result, setResult] = useState<ApiResult | null>(null);
-  const [activeTab, setActiveTab] = useState<"form" | "json" | "csv">("form");
-  const [status, setStatus] = useState<
-    "idle" | "uploading" | "reading" | "structuring" | "done" | "error"
-  >("idle");
+  const [mode, setMode] = useState<DemoMode>("report");
+  const [images, setImages] = useState<ImageSlot[]>([]);
+  const [draft, setDraft] = useState<DraftResult | null>(null);
+  const [status, setStatus] = useState<WorkflowStatus>("idle");
   const [error, setError] = useState("");
+  const [revealCount, setRevealCount] = useState(0);
+  const [resultTab, setResultTab] = useState<ResultTab>("document");
+  const [chatVisible, setChatVisible] = useState(false);
+  const [chatSender, setChatSender] = useState("現場太郎");
+  const [chatCount, setChatCount] = useState(0);
+  const [elapsedLabel, setElapsedLabel] = useState("約20秒");
+  const timersRef = useRef<number[]>([]);
 
-  const progress = {
-    idle: 0,
-    uploading: 20,
-    reading: 50,
-    structuring: 80,
-    done: 100,
-    error: 0
-  }[status];
+  const isProcessing =
+    status === "receiving" || status === "reading" || status === "drafting";
 
-  const averageConfidence = useMemo(() => {
-    if (!result?.fields.length) return 0;
-    return Math.round(
-      result.fields.reduce((sum, field) => sum + field.confidence, 0) /
-        result.fields.length
-    );
-  }, [result]);
+  const reviewCount = draft?.reviewFields.length ?? 0;
 
-  const reviewCount = useMemo(
-    () => result?.fields.filter((field) => field.needsReview).length ?? 0,
-    [result]
-  );
+  const metrics = useMemo(() => {
+    if (!draft) return null;
+    return {
+      modeLabel: mode === "report" ? "報告書" : "朝礼メモ",
+      images: draft.sourceImages.length || images.length,
+      review: draft.reviewFields.length,
+      statusLabel:
+        status === "submitted"
+          ? "提出済"
+          : status === "reviewed"
+            ? "確認済"
+            : "下書き"
+    };
+  }, [draft, images.length, mode, status]);
 
-  function validateFile(nextFile: File): string | null {
-    if (!ACCEPTED_TYPES.includes(nextFile.type)) {
-      return "JPG、PNG、WebP形式の画像を選択してください。";
-    }
+  useEffect(() => {
+    return () => {
+      clearTimers();
+      images.forEach((image) => {
+        if (!image.fromSample) URL.revokeObjectURL(image.previewUrl);
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    if (nextFile.size > MAX_FILE_SIZE) {
-      return "ファイルサイズは10MB以下にしてください。";
-    }
-
-    return null;
+  function clearTimers() {
+    timersRef.current.forEach((id) => window.clearTimeout(id));
+    timersRef.current = [];
   }
 
-  function selectFile(nextFile: File) {
-    const validationError = validateFile(nextFile);
+  function schedule(fn: () => void, ms: number) {
+    const id = window.setTimeout(fn, ms);
+    timersRef.current.push(id);
+  }
 
-    if (validationError) {
-      setError(validationError);
-      setStatus("error");
-      return;
-    }
+  function revokeNonSample(nextImages: ImageSlot[]) {
+    images.forEach((image) => {
+      if (!image.fromSample) URL.revokeObjectURL(image.previewUrl);
+    });
+    setImages(nextImages);
+  }
 
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-
-    setFile(nextFile);
-    setPreviewUrl(URL.createObjectURL(nextFile));
-    setResult(null);
-    setError("");
+  function resetAll() {
+    clearTimers();
+    revokeNonSample([]);
+    setDraft(null);
     setStatus("idle");
+    setError("");
+    setRevealCount(0);
+    setResultTab("document");
+    setChatVisible(false);
+    setElapsedLabel("約20秒");
   }
 
-  function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
-    const selected = event.target.files?.[0];
-    if (selected) selectFile(selected);
+  function handleModeChange(nextMode: DemoMode) {
+    if (nextMode === mode) return;
+    resetAll();
+    setMode(nextMode);
   }
 
-  function handleDrop(event: DragEvent<HTMLDivElement>) {
-    event.preventDefault();
-    const dropped = event.dataTransfer.files?.[0];
-    if (dropped) selectFile(dropped);
+  function animateReveal(total: number, onDone: () => void) {
+    setRevealCount(0);
+    for (let i = 1; i <= total; i += 1) {
+      schedule(() => setRevealCount(i), 120 * i);
+    }
+    schedule(onDone, 120 * total + 80);
   }
 
-  async function analyze() {
-    if (!file) {
+  function attachSourceImages(
+    result: DraftResult,
+    slots: ImageSlot[]
+  ): DraftResult {
+    return {
+      ...result,
+      sourceImages: slots.map((slot) => ({
+        name: slot.name,
+        previewUrl: slot.previewUrl
+      }))
+    };
+  }
+
+  async function playSample(sampleId: string) {
+    const sample = SAMPLE_SETS.find((item) => item.id === sampleId);
+    if (!sample) return;
+
+    clearTimers();
+    setError("");
+    setDraft(null);
+    setResultTab("document");
+    setChatSender(sample.senderName);
+    setChatCount(sample.imagePaths.length);
+    setChatVisible(true);
+    setStatus("receiving");
+    setElapsedLabel("約20秒");
+
+    const slots: ImageSlot[] = sample.imagePaths.map((path, index) => ({
+      id: `sample-${sample.id}-${index}`,
+      name: path.split("/").pop() || `sample-${index + 1}.svg`,
+      previewUrl: path,
+      fromSample: true
+    }));
+
+    schedule(() => {
+      revokeNonSample(slots);
+    }, 400);
+
+    schedule(() => setStatus("reading"), 900);
+    schedule(() => setStatus("drafting"), 1800);
+
+    schedule(() => {
+      const nextDraft = attachSourceImages(
+        structuredClone(sample.draft),
+        slots
+      );
+      setDraft(nextDraft);
+      const total =
+        sample.mode === "report" ? REPORT_REVEAL_TOTAL : TOOLBOX_REVEAL_TOTAL;
+      animateReveal(total, () => {
+        setStatus("draft");
+        setChatVisible(false);
+      });
+    }, 2600);
+  }
+
+  async function generateFromUpload() {
+    if (!images.length) {
       setError("解析する画像を選択してください。");
       setStatus("error");
       return;
     }
 
+    const uploadable = images.filter((image) => image.file);
+    if (!uploadable.length) {
+      setError(
+        "サンプル画像のまま実AI解析はできません。自分の写真を追加するか、サンプル再生を使ってください。"
+      );
+      setStatus("error");
+      return;
+    }
+
+    clearTimers();
     setError("");
-    setResult(null);
-    setStatus("uploading");
+    setDraft(null);
+    setResultTab("document");
+    setStatus("reading");
+    const started = Date.now();
+
+    schedule(() => setStatus("drafting"), 1200);
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("mode", mode);
+      uploadable.forEach((image) => {
+        if (image.file) formData.append("files", image.file);
+      });
 
-      const readingTimer = window.setTimeout(() => setStatus("reading"), 500);
-      const structuringTimer = window.setTimeout(
-        () => setStatus("structuring"),
-        1800
-      );
-
-      const response = await fetch("/api/ocr", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         body: formData
       });
-
-      window.clearTimeout(readingTimer);
-      window.clearTimeout(structuringTimer);
-
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "解析に失敗しました。");
+        throw new Error(data.error || "下書き作成に失敗しました。");
       }
 
-      setResult(data);
-      setStatus("done");
-      setActiveTab("form");
+      const seconds = Math.max(1, Math.round((Date.now() - started) / 1000));
+      setElapsedLabel(`約${seconds}秒`);
+
+      const nextDraft = attachSourceImages(data as DraftResult, images);
+      setDraft(nextDraft);
+      const total =
+        mode === "report" ? REPORT_REVEAL_TOTAL : TOOLBOX_REVEAL_TOTAL;
+      setStatus("drafting");
+      animateReveal(total, () => setStatus("draft"));
     } catch (caught) {
       setError(
-        caught instanceof Error ? caught.message : "解析に失敗しました。"
+        caught instanceof Error ? caught.message : "下書き作成に失敗しました。"
       );
       setStatus("error");
     }
   }
 
-  function updateField(index: number, value: string) {
-    setResult((current) => {
+  function clearReview(path: string) {
+    setDraft((current) => {
       if (!current) return current;
-
-      const fields = current.fields.map((field, fieldIndex) =>
-        fieldIndex === index
-          ? {
-              ...field,
-              value,
-              needsReview: false,
-              confidence: Math.max(field.confidence, 90)
-            }
-          : field
-      );
-
-      return { ...current, fields };
+      return {
+        ...current,
+        reviewFields: current.reviewFields.filter(
+          (field) => field.path !== path
+        )
+      };
     });
   }
 
-  function objectData() {
-    return Object.fromEntries(
-      (result?.fields ?? []).map((field) => [field.key, field.value])
-    );
+  function updateReportHeader(key: keyof ReportHeader, value: string) {
+    setDraft((current) => {
+      if (!current || !isReportDraft(current)) return current;
+      return {
+        ...current,
+        header: { ...current.header, [key]: value }
+      };
+    });
   }
 
-  function csvData() {
-    const escapeCsv = (value: string) =>
-      `"${String(value).replaceAll('"', '""')}"`;
-
-    return [
-      ["key", "項目名", "値", "信頼度", "要確認"],
-      ...(result?.fields ?? []).map((field) => [
-        field.key,
-        field.label,
-        field.value,
-        String(field.confidence),
-        field.needsReview ? "はい" : "いいえ"
-      ])
-    ]
-      .map((row) => row.map(escapeCsv).join(","))
-      .join("\n");
+  function updateReportSection(key: keyof ReportSections, value: string) {
+    setDraft((current) => {
+      if (!current || !isReportDraft(current)) return current;
+      return {
+        ...current,
+        sections: { ...current.sections, [key]: value }
+      };
+    });
   }
 
-  function download(filename: string, text: string, type: string) {
-    const blob = new Blob([text], { type });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    anchor.click();
-    URL.revokeObjectURL(url);
+  function updateToolboxMeta(
+    key: "title" | "date" | "siteName" | "summary",
+    value: string
+  ) {
+    setDraft((current) => {
+      if (!current || !isToolboxBriefing(current)) return current;
+      return { ...current, [key]: value };
+    });
   }
 
-  function reset() {
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setFile(null);
-    setPreviewUrl("");
-    setResult(null);
-    setError("");
-    setStatus("idle");
-    if (inputRef.current) inputRef.current.value = "";
+  function updateToolboxList(
+    key: "focusWorks" | "safetyPoints" | "cautionAreas" | "talkScripts",
+    value: string[]
+  ) {
+    setDraft((current) => {
+      if (!current || !isToolboxBriefing(current)) return current;
+      return { ...current, [key]: value };
+    });
   }
 
-  const statusText = {
-    idle: "画像を選択してください",
-    uploading: "画像をアップロードしています…",
-    reading: "文字とレイアウトを読み取っています…",
-    structuring: "項目を構造化しています…",
-    done: "解析が完了しました",
-    error: "エラーが発生しました"
-  }[status];
+  function handlePrint() {
+    window.print();
+  }
 
-  const isAnalyzing =
-    status === "uploading" ||
-    status === "reading" ||
-    status === "structuring";
+  const editable =
+    status === "draft" || status === "reviewed" || status === "submitted";
 
   return (
     <main>
       <div className="shell">
-        <header className="hero">
+        <header className="hero no-print">
           <div>
-            <span className="eyebrow">AI DOCUMENT PROCESSING</span>
-            <h1>帳票を、使えるデータへ。</h1>
+            <span className="eyebrow">CONSTRUCTION SITE AI</span>
+            <h1>現場写真から、報告書と朝礼メモへ。</h1>
             <p>
-              紙帳票や写真をアップロードすると、AIが内容を読み取り、
-              編集可能な構造化データへ変換します。
+              複数の現場写真を置くだけで、内勤向けの報告書下書きや朝礼メモを自動作成します。
+              要確認欄だけ直して、そのまま提出・PDF保存できます。
             </p>
           </div>
           <span className="demoBadge">体験デモ</span>
         </header>
 
-        <aside className="notice" role="note">
+        <aside className="notice no-print" role="note">
           <strong>ご利用上の注意</strong>
-          デモ用途では機密情報・個人情報を含む帳票をアップロードしないでください。
+          デモ用途では機密情報・個人情報を含む写真をアップロードしないでください。
           画像はサーバーに保存せず、解析のためにAI APIへ送信したあと破棄されます。
+          サンプル再生はAPIキー不要です。
         </aside>
 
-        {result && (
-          <section className="metrics" aria-label="解析結果の概要">
-            <Metric label="帳票種類" value={result.documentType} />
-            <Metric label="検出項目" value={`${result.fields.length}件`} />
-            <Metric label="平均信頼度" value={`${averageConfidence}%`} />
-            <Metric label="要確認" value={`${reviewCount}件`} />
+        <ModeSelector
+          mode={mode}
+          disabled={isProcessing}
+          onChange={handleModeChange}
+        />
+
+        <ChatArrivalToast
+          visible={chatVisible}
+          senderName={chatSender}
+          photoCount={chatCount}
+          onDismiss={() => setChatVisible(false)}
+        />
+
+        {metrics && (
+          <section className="metrics no-print" aria-label="下書きの概要">
+            <Metric label="成果物" value={metrics.modeLabel} />
+            <Metric label="写真" value={`${metrics.images}枚`} />
+            <Metric label="要確認" value={`${metrics.review}件`} />
+            <Metric label="状態" value={metrics.statusLabel} />
           </section>
         )}
 
         <section className="workspace">
-          <div className="leftColumn">
+          <div className="leftColumn no-print">
             <div className="panelHeader">
               <div>
-                <h2>帳票画像</h2>
-                <p>JPG・PNG・WebP / 最大10MB</p>
+                <h2>現場写真</h2>
+                <p>
+                  {mode === "report"
+                    ? "1日分の写真（最大5枚）"
+                    : "朝礼用の写真（1〜3枚推奨）"}
+                </p>
               </div>
-              {file && (
-                <button className="textButton" type="button" onClick={reset}>
-                  選び直す
+              {images.length > 0 && (
+                <button
+                  className="textButton"
+                  type="button"
+                  onClick={resetAll}
+                  disabled={isProcessing}
+                >
+                  クリア
                 </button>
               )}
             </div>
 
-            {!previewUrl ? (
-              <div
-                className="dropZone"
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={handleDrop}
-                onClick={() => inputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    inputRef.current?.click();
-                  }
-                }}
-              >
-                <div className="uploadIcon">↑</div>
-                <strong>画像をドロップ</strong>
-                <span>またはクリックして選択</span>
-                <button type="button">画像を選択</button>
-              </div>
-            ) : (
-              <div className="preview">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={previewUrl} alt="アップロードした帳票のプレビュー" />
-              </div>
-            )}
-
-            <input
-              ref={inputRef}
-              className="hiddenInput"
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={handleFileInput}
+            <SampleLauncher
+              mode={mode}
+              disabled={isProcessing}
+              onSelect={playSample}
             />
 
-            {file && (
-              <div className="fileInfo">
-                <div>
-                  <strong>{file.name}</strong>
-                  <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
-                </div>
-                <button
-                  className="primaryButton"
-                  type="button"
-                  onClick={analyze}
-                  disabled={isAnalyzing}
-                >
-                  {isAnalyzing ? "解析中…" : "AIで帳票を解析"}
-                </button>
-              </div>
-            )}
+            <div className="dividerLabel">または自分の写真で試す</div>
 
-            {(status !== "idle" || error) && (
-              <div className={`statusBox ${status === "error" ? "error" : ""}`}>
-                <div className="statusLine">
-                  <span>{error || statusText}</span>
-                  {!error && <strong>{progress}%</strong>}
-                </div>
-                {!error && (
-                  <div className="progressTrack">
-                    <div
-                      className="progressBar"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+            <MultiImageUploader
+              images={images}
+              disabled={isProcessing}
+              onChange={(next) => {
+                setImages(next);
+                setDraft(null);
+                setStatus("idle");
+                setError("");
+                setRevealCount(0);
+              }}
+              onError={(message) => {
+                setError(message);
+                setStatus("error");
+              }}
+            />
+
+            <ProcessStepper
+              status={status}
+              error={error}
+              showBeforeAfter
+              elapsedLabel={elapsedLabel}
+            />
+
+            <WorkflowActions
+              status={status}
+              reviewCount={reviewCount}
+              canGenerate={images.some((image) => image.file)}
+              isProcessing={isProcessing}
+              onGenerate={generateFromUpload}
+              onReview={() => setStatus("reviewed")}
+              onSubmit={() => setStatus("submitted")}
+              onPrint={handlePrint}
+              onReset={resetAll}
+            />
           </div>
 
           <div className="rightColumn">
-            <div className="panelHeader">
+            <div className="panelHeader no-print">
               <div>
-                <h2>抽出結果</h2>
-                <p>値をクリックして修正できます</p>
+                <h2>
+                  {mode === "report" ? "現場状況報告書" : "本日の朝礼メモ"}
+                </h2>
+                <p>テンプレート下書きを編集できます</p>
               </div>
-              {result && <span className="successBadge">解析済み</span>}
+              {draft && (
+                <span className="successBadge">
+                  {status === "submitted"
+                    ? "提出済"
+                    : status === "reviewed"
+                      ? "確認済"
+                      : "下書き"}
+                </span>
+              )}
             </div>
 
-            {!result ? (
-              <div className="emptyState">
-                <div className="emptyIcon">◎</div>
-                <strong>解析結果がここに表示されます</strong>
-                <span>
-                  左側から帳票画像をアップロードし、
-                  「AIで帳票を解析」を押してください。
-                </span>
-              </div>
+            <div className="tabs no-print" role="tablist">
+              <button
+                type="button"
+                className={resultTab === "document" ? "active" : ""}
+                onClick={() => setResultTab("document")}
+              >
+                成果物
+              </button>
+              <button
+                type="button"
+                className={resultTab === "detail" ? "active" : ""}
+                onClick={() => setResultTab("detail")}
+              >
+                詳細データ
+              </button>
+            </div>
+
+            {resultTab === "document" ? (
+              !draft ? (
+                <div className="emptyState">
+                  <div className="emptyIcon">◎</div>
+                  <strong>
+                    {mode === "report"
+                      ? "報告書の下書きがここに表示されます"
+                      : "朝礼メモの下書きがここに表示されます"}
+                  </strong>
+                  <span>
+                    左の「サンプルで試す」を押すと、現場から写真が届く演出のあと、
+                    テンプレート下書きが自動作成されます。
+                  </span>
+                </div>
+              ) : isReportDraft(draft) ? (
+                <ReportTemplateView
+                  draft={draft as ReportDraft}
+                  revealCount={editable ? REPORT_REVEAL_TOTAL : revealCount}
+                  editable={editable}
+                  onHeaderChange={updateReportHeader}
+                  onSectionChange={updateReportSection}
+                  onClearReview={clearReview}
+                />
+              ) : (
+                <ToolboxTemplateView
+                  draft={draft as ToolboxBriefing}
+                  revealCount={editable ? TOOLBOX_REVEAL_TOTAL : revealCount}
+                  editable={editable}
+                  onMetaChange={updateToolboxMeta}
+                  onListChange={updateToolboxList}
+                  onClearReview={clearReview}
+                />
+              )
             ) : (
-              <>
-                <div className="resultSummary">
-                  <div>
-                    <span>判定された帳票</span>
-                    <strong>{result.documentType}</strong>
-                  </div>
-                  <p>{result.summary}</p>
-                </div>
-
-                <div className="tabs" role="tablist">
-                  {(["form", "json", "csv"] as const).map((tab) => (
-                    <button
-                      type="button"
-                      key={tab}
-                      className={activeTab === tab ? "active" : ""}
-                      onClick={() => setActiveTab(tab)}
-                    >
-                      {tab === "form"
-                        ? "フォーム"
-                        : tab === "json"
-                          ? "JSON"
-                          : "CSV"}
-                    </button>
-                  ))}
-                </div>
-
-                {activeTab === "form" && (
-                  <div className="fieldList">
-                    {result.fields.map((field, index) => (
-                      <FieldEditor
-                        key={`${field.key}-${index}`}
-                        field={field}
-                        onChange={(value) => updateField(index, value)}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {activeTab === "json" && (
-                  <pre>{JSON.stringify(objectData(), null, 2)}</pre>
-                )}
-
-                {activeTab === "csv" && <pre>{csvData()}</pre>}
-
-                {result.warnings.length > 0 && (
-                  <div className="warningBox">
-                    <strong>確認事項</strong>
-                    <ul>
-                      {result.warnings.map((warning, index) => (
-                        <li key={index}>{warning}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div className="downloadActions">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      download(
-                        "ocr-result.json",
-                        JSON.stringify(objectData(), null, 2),
-                        "application/json"
-                      )
-                    }
-                  >
-                    JSONを出力
-                  </button>
-                  <button
-                    className="primaryButton"
-                    type="button"
-                    onClick={() =>
-                      download(
-                        "ocr-result.csv",
-                        `\uFEFF${csvData()}`,
-                        "text/csv;charset=utf-8"
-                      )
-                    }
-                  >
-                    CSVをダウンロード
-                  </button>
-                </div>
-              </>
+              <DetailDataPanel ocrDetail={draft?.ocrDetail} />
             )}
           </div>
         </section>
 
-        <footer>
+        <footer className="no-print">
           <span>
             アップロード画像はサーバーに保存されず、解析のためAI
             APIへ送信されます。
           </span>
-          <span>デモ用途では機密情報を含む帳票を使用しないでください。</span>
+          <span>
+            PDF保存は印刷ダイアログから「PDFに保存」を選んでください。
+          </span>
         </footer>
       </div>
     </main>
@@ -449,39 +495,5 @@ function Metric({ label, value }: { label: string; value: string }) {
       <span>{label}</span>
       <strong>{value}</strong>
     </div>
-  );
-}
-
-function FieldEditor({
-  field,
-  onChange
-}: {
-  field: OcrField;
-  onChange: (value: string) => void;
-}) {
-  const multiline = field.value.length > 40;
-
-  return (
-    <label className={`field ${field.needsReview ? "needsReview" : ""}`}>
-      <div className="fieldLabel">
-        <span>{field.label}</span>
-        <span className={field.needsReview ? "reviewBadge" : "confidence"}>
-          {field.confidence}%
-          {field.needsReview ? "・要確認" : ""}
-        </span>
-      </div>
-      {multiline ? (
-        <textarea
-          value={field.value}
-          rows={3}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <input
-          value={field.value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      )}
-    </label>
   );
 }

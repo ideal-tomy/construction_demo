@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AI OCR 帳票デジタル化デモ",
+  title: "現場写真 → 報告書 / 朝礼メモ | AIデモ",
   description:
-    "画像をアップロードして、帳票を構造化データへ変換するOCR体験デモ"
+    "建設現場の写真から報告書下書きと朝礼メモを自動作成する体験デモ"
 };
 
 export default function RootLayout({

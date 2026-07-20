@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#e9c46a"/>
+      <stop offset="100%" stop-color="#1b263b"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="420" fill="url(#g)"/>
+  <rect x="36" y="36" width="568" height="348" rx="18" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.35)"/>
+  <text x="56" y="110" fill="#fff" font-family="sans-serif" font-size="28" font-weight="700">現場写真サンプル</text>
+  <text x="56" y="170" fill="#fff" font-family="sans-serif" font-size="42" font-weight="700">開口部養生</text>
+  <text x="56" y="230" fill="#e8eef7" font-family="sans-serif" font-size="24">確認済</text>
+  <text x="56" y="340" fill="rgba(255,255,255,0.75)" font-family="sans-serif" font-size="16">デモ用モック画像 / 個人情報なし</text>
+</svg>

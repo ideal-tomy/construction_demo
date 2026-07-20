@@ -576,7 +576,473 @@ footer {
   }
 
   .fileInfo .primaryButton,
-  .downloadActions button {
+  .downloadActions button,
+  .workflowButtons button {
     width: 100%;
+  }
+
+  .modeSelector,
+  .sampleButtons,
+  .beforeAfter,
+  .workflowStatusPills {
+    flex-wrap: wrap;
+  }
+
+  .thumbGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Construction experience extensions --- */
+
+.modeSelector {
+  display: inline-flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.modeSelector button {
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: var(--muted);
+  background: transparent;
+  font-weight: 700;
+}
+
+.modeSelector button.active {
+  color: white;
+  background: var(--accent);
+}
+
+.chatToast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid #c7d7f2;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #eef5ff, #ffffff);
+  box-shadow: 0 10px 30px rgba(23, 105, 224, 0.08);
+  animation: toastIn 0.35s ease;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatToastAvatar {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  color: white;
+  background: var(--accent);
+  font-weight: 800;
+}
+
+.chatToastBody {
+  min-width: 0;
+  flex: 1;
+}
+
+.chatToastBody strong,
+.chatToastBody span {
+  display: block;
+}
+
+.chatToastBody span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sampleLauncher {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: white;
+}
+
+.sampleLauncherHeader {
+  margin-bottom: 12px;
+}
+
+.sampleLauncherHeader strong,
+.sampleLauncherHeader span {
+  display: block;
+}
+
+.sampleLauncherHeader span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.sampleButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sampleButtons button {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: var(--text);
+  background: #f7faff;
+  font-weight: 600;
+}
+
+.sampleButtons button:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.dividerLabel {
+  margin: 8px 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.dropZone.compact {
+  min-height: 220px;
+}
+
+.dropZone.hasFiles {
+  min-height: 180px;
+}
+
+.thumbGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.thumbCard {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+}
+
+.thumbCard img {
+  display: block;
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  background: #eef2f7;
+}
+
+.thumbMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+}
+
+.thumbMeta strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.beforeAfter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: white;
+}
+
+.beforeAfter > div span,
+.beforeAfterAi span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.beforeAfter > div strong,
+.beforeAfterAi strong {
+  font-size: 20px;
+}
+
+.beforeAfterArrow {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.beforeAfterAi {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--success-soft);
+}
+
+.beforeAfterAi strong {
+  color: var(--success);
+}
+
+.workflowActions {
+  margin-top: 16px;
+}
+
+.workflowStatusPills {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.workflowStatusPills span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--muted);
+  background: #eef2f7;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.workflowStatusPills span.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.workflowStatusPills span.active.success {
+  color: var(--success);
+  background: var(--success-soft);
+}
+
+.workflowButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.workflowButtons > button:not(.primaryButton):not(.textButton) {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: var(--text);
+  background: white;
+}
+
+.submitMessage {
+  margin: 12px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--success);
+  background: var(--success-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.emptyState.compact {
+  min-height: 220px;
+}
+
+.docTemplate {
+  padding: 8px 4px 18px;
+}
+
+.docHeader {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--text);
+}
+
+.docEyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+.docHeader h3 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: -0.03em;
+}
+
+.docSub {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.docGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.docField,
+.docBlock {
+  display: block;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fbfcfe;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    background 0.2s ease;
+}
+
+.docField.pending,
+.docBlock.pending {
+  opacity: 0.35;
+  transform: translateY(4px);
+}
+
+.docField.revealed,
+.docBlock.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.docField.needsReview,
+.docBlock.needsReview {
+  border-color: #e5a24f;
+  background: var(--warning-soft);
+}
+
+.docField span,
+.docBlock span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.docField em,
+.docBlock em {
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--warning);
+  background: white;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.docField input,
+.docBlock input,
+.docBlock textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 11px;
+  color: var(--text);
+  background: white;
+  outline: none;
+}
+
+.docBlock textarea {
+  resize: vertical;
+}
+
+.docField strong,
+.docBlock p {
+  margin: 0;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.docField small,
+.docBlock small {
+  display: block;
+  margin-top: 8px;
+  color: var(--warning);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.docSections {
+  display: grid;
+  gap: 10px;
+}
+
+.docBlock.emphasize {
+  border-color: #f0b4b4;
+  background: #fff7f7;
+}
+
+.docBlock.emphasize span {
+  color: var(--danger);
+}
+
+.docBlock ul {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.8;
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  .shell {
+    width: 100% !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .workspace {
+    display: block !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .rightColumn {
+    padding: 0 !important;
+  }
+
+  .docTemplate {
+    padding: 0 !important;
+  }
+
+  .docField,
+  .docBlock {
+    break-inside: avoid;
+    background: white !important;
   }
 }
