@@ -105,7 +105,22 @@ export async function POST(request: NextRequest) {
           content: [
             {
               type: "input_text",
-              text: `次のJSON形式で帳票を解析してください。\n\n{\n  "documentType": "帳票種類",\n  "summary": "帳票内容の短い要約",\n  "fields": [\n    {\n      "key": "field_key",\n      "label": "項目名",\n      "value": "抽出値",\n      "confidence": 95,\n      "needsReview": false\n    }\n  ],\n  "warnings": ["確認事項"]\n}`
+              text: `次のJSON形式で帳票を解析してください。
+
+{
+  "documentType": "帳票種類",
+  "summary": "帳票内容の短い要約",
+  "fields": [
+    {
+      "key": "field_key",
+      "label": "項目名",
+      "value": "抽出値",
+      "confidence": 95,
+      "needsReview": false
+    }
+  ],
+  "warnings": ["確認事項"]
+}`
             },
             {
               type: "input_image",
