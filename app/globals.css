@@ -1044,6 +1044,454 @@ footer {
   line-height: 1.8;
 }
 
+.ghostButton,
+.secondaryButton {
+  min-height: 48px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.ghostButton {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: white;
+}
+
+.secondaryButton {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.docBlockWrap {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fbfcfe;
+}
+
+.docBlockWrap.needsReview {
+  border-color: #e5a24f;
+  background: var(--warning-soft);
+}
+
+.docBlockWrap.pending {
+  opacity: 0.35;
+}
+
+.docBlockWrap.revealed {
+  opacity: 1;
+}
+
+.docBlockWrap .docBlock {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.docAccordionBtn {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 0;
+  padding: 12px;
+  color: var(--text);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.docAccordionBtn em {
+  margin-left: 8px;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: var(--warning);
+  background: white;
+  font-style: normal;
+  font-size: 11px;
+}
+
+.docCollapsedPreview {
+  margin: 0;
+  padding: 0 12px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.docBlock.isCollapsed {
+  display: none;
+}
+
+.docCompact .docHeader {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+}
+
+.docCompact .docHeader h3 {
+  font-size: 18px;
+}
+
+.docCompact .docGrid {
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.docCompact .docField {
+  padding: 10px;
+}
+
+.docCompact .docSections {
+  gap: 8px;
+}
+
+.docCompact .docBlock {
+  padding: 10px 12px 12px;
+}
+
+.docCompact textarea {
+  min-height: 64px;
+  font-size: 14px;
+}
+
+.workflowSticky {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  margin: 0;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -8px 30px rgba(19, 34, 56, 0.08);
+}
+
+.workflowSticky .stickyButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.workflowSticky .stickyButtons .primaryButton {
+  flex: 1 1 120px;
+  min-height: 48px;
+}
+
+.workflowSticky .stickyButtons .ghostButton,
+.workflowSticky .stickyButtons .secondaryButton {
+  flex: 0 0 auto;
+  min-width: 64px;
+}
+
+/* --- Mobile experience --- */
+
+@media (max-width: 768px) {
+  main.appMain {
+    min-height: 100dvh;
+    padding: 12px 12px 24px;
+  }
+
+  main.appMain[data-mobile-step="result"] {
+    padding-bottom: 100px;
+  }
+
+  .shell {
+    width: 100%;
+  }
+
+  .mobileStepNav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .mobileStepNav button {
+    min-height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--muted);
+    background: white;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .mobileStepNav button.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .mobileIntro {
+    display: flex;
+    min-height: calc(100dvh - 24px);
+    flex-direction: column;
+  }
+
+  .mobileIntro .hero {
+    margin-bottom: 12px;
+  }
+
+  .heroTopRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .heroTopRow .eyebrow {
+    margin-bottom: 0;
+  }
+
+  .mobileIntro .hero h1 {
+    font-size: clamp(24px, 7vw, 30px);
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+  }
+
+  .mobileIntro .hero p {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .demoBadge {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .guideAccordion {
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: white;
+    overflow: hidden;
+  }
+
+  .guideAccordion summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 14px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .guideAccordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .guideAccordionBody {
+    padding: 0 14px 14px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .guideAccordionBody p {
+    margin: 0 0 8px;
+  }
+
+  .guideAccordionBody p:last-child {
+    margin-bottom: 0;
+  }
+
+  .introCta {
+    margin-top: auto;
+    padding-top: 18px;
+  }
+
+  .introCtaButton {
+    width: 100%;
+    min-height: 52px;
+    font-size: 16px;
+  }
+
+  .introCta p {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .mobileUpload .modeSelector {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr 1fr;
+    margin-bottom: 12px;
+  }
+
+  .mobileUpload .modeSelector button {
+    min-height: 44px;
+  }
+
+  .mobileWorkspace {
+    border-radius: 18px;
+  }
+
+  .mobilePane {
+    padding: 16px !important;
+  }
+
+  .mobileUpload .sampleLauncher {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+
+  .mobileUpload .sampleLauncherHeader span {
+    font-size: 12px;
+  }
+
+  .mobileUpload .sampleButtons {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mobileUpload .sampleButtons button {
+    min-height: 44px;
+    text-align: left;
+  }
+
+  .mobileUpload .dropZone.compact {
+    min-height: 150px;
+  }
+
+  .mobileUpload .uploadIcon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 10px;
+    font-size: 22px;
+  }
+
+  .mobileUpload .thumbGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .mobileUpload .thumbCard img {
+    height: 84px;
+  }
+
+  .mobileFullBtn {
+    width: 100%;
+    min-height: 50px;
+  }
+
+  .mobileHint {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .mobileUploadActions {
+    margin-top: 14px;
+  }
+
+  .mobileResultHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .mobileResultEyebrow {
+    margin: 0 0 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mobileResultHeader h2 {
+    margin: 0;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+  }
+
+  .mobileMetricStrip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .mobileMetricStrip span {
+    border-radius: 999px;
+    padding: 5px 8px;
+    color: var(--muted);
+    background: #eef2f7;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .photoAccordion {
+    margin: 10px 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: white;
+    overflow: hidden;
+  }
+
+  .photoAccordion summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .photoAccordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .compactThumbs {
+    padding: 0 10px 10px;
+  }
+
+  .mobileDocScroll {
+    padding-bottom: 8px;
+  }
+
+  .mobileSubmitMsg {
+    margin-top: 12px;
+  }
+
+  .mobileStickySpacer {
+    height: 12px;
+  }
+
+  .mobileResult .tabs {
+    margin-top: 8px;
+  }
+
+  .mobileResult .emptyState {
+    min-height: 220px;
+    padding: 20px;
+  }
+
+  .chatToast {
+    padding: 12px;
+  }
+
+  .chatToastAvatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 @media print {
   body {
     background: white !important;
@@ -1077,8 +1525,18 @@ footer {
   }
 
   .docField,
-  .docBlock {
+  .docBlock,
+  .docBlockWrap {
     break-inside: avoid;
     background: white !important;
+  }
+
+  .docCollapsedPreview,
+  .docAccordionBtn {
+    display: none !important;
+  }
+
+  .docBlock.isCollapsed {
+    display: block !important;
   }
 }
