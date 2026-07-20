@@ -124,6 +124,42 @@ main {
   margin-bottom: 4px;
 }
 
+.tipBox {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.tipBox strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.tipBox ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.tipBox li + li {
+  margin-top: 6px;
+}
+
+.tipBox em {
+  font-style: normal;
+  font-weight: 700;
+}
+
+.tipBox p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
 .metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -311,6 +311,23 @@ export default function Home() {
           サンプル再生はAPIキー不要です。
         </aside>
 
+        <aside className="tipBox no-print" aria-label="アップロードする写真の目安">
+          <strong>どんな写真をアップロードすればよいか</strong>
+          <ul>
+            <li>
+              <em>映っていると良いもの:</em>
+              作業本体（型枠・配筋・配管・掘削など）、進捗が分かるアングル、資材・重機、養生・安全帯・開口・誘導など。複数枚あると下書きが安定します。
+            </li>
+            <li>
+              <em>関係ない画像の場合:</em>
+              現場と無関係な写真（風景・料理・画面キャプチャなど）では、抽出できる情報がほぼないため、各項目が「要確認」になります。
+            </li>
+          </ul>
+          <p>
+            商談では先に「サンプルで試す」を使うと、キー不要で理想の演出を確実に見せられます。
+          </p>
+        </aside>
+
         <ModeSelector
           mode={mode}
           disabled={isProcessing}
