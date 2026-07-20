@@ -2,7 +2,7 @@
 
 画像をアップロードすると、OpenAI の画像認識モデルが帳票の種類と項目を判定し、編集可能な構造化データとして返す Next.js デモです。
 
-このプロジェクトはスタンドアロン実装です。`@axeon/ai-demo-core` / Trial は使いません。
+このプロジェクトはワークスペース直下のスタンドアロン実装です。`@axeon/ai-demo-core` / Trial は使いません。
 
 ## 主な機能
 
@@ -22,6 +22,7 @@
 ## セットアップ
 
 ```bash
+cd ocr-demo-nextjs
 npm install
 cp .env.example .env.local
 ```
@@ -81,3 +82,7 @@ type OcrResult = {
 ```
 
 API はこれに `meta`（filename / mimeType / size）を付けて返します。
+
+## 参考
+
+元になった参考実装は `ocr_document_demo/docs/ocr-demo-nextjs/` にあります。実行・改修の正はこのディレクトリです。
