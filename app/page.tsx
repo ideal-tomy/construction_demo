@@ -33,7 +33,6 @@ const TOOLBOX_REVEAL_TOTAL = 8;
 export default function Home() {
   const isMobile = useIsMobile();
   const [mobileStep, setMobileStep] = useState<MobileStep>("intro");
-  const [guidesOpen, setGuidesOpen] = useState(false);
   const [photosOpen, setPhotosOpen] = useState(false);
   const [mode, setMode] = useState<DemoMode>("report");
   const [images, setImages] = useState<ImageSlot[]>([]);
@@ -191,6 +190,7 @@ export default function Home() {
         slots
       );
       setDraft(nextDraft);
+      setPhotosOpen(true);
       const total =
         sample.mode === "report" ? REPORT_REVEAL_TOTAL : TOOLBOX_REVEAL_TOTAL;
       animateReveal(total, () => {
@@ -248,6 +248,7 @@ export default function Home() {
 
       const nextDraft = attachSourceImages(data as DraftResult, images);
       setDraft(nextDraft);
+      setPhotosOpen(true);
       const total =
         mode === "report" ? REPORT_REVEAL_TOTAL : TOOLBOX_REVEAL_TOTAL;
       setStatus("drafting");
@@ -405,59 +406,32 @@ export default function Home() {
               </div>
             </header>
 
-            {isMobile ? (
-              <details
-                className="guideAccordion"
-                open={guidesOpen}
-                onToggle={(event) =>
-                  setGuidesOpen((event.target as HTMLDetailsElement).open)
-                }
-              >
-                <summary>注意・写真の目安</summary>
-                <div className="guideAccordionBody">
-                  <p>
-                    機密・個人情報はアップしないでください。画像は保存せず、解析後に破棄。サンプルはキー不要です。
-                  </p>
-                  <p>
-                    <strong>良い写真:</strong>
-                    作業本体・進捗・資材/重機・養生や安全関連。複数枚推奨。
-                  </p>
-                  <p>
-                    <strong>無関係な画像:</strong>
-                    ほぼ情報が取れず、各項目が「要確認」になります。
-                  </p>
-                </div>
-              </details>
-            ) : (
-              <>
-                <aside className="notice" role="note">
-                  <strong>ご利用上の注意</strong>
-                  デモ用途では機密情報・個人情報を含む写真をアップロードしないでください。
-                  画像はサーバーに保存せず、解析のためにAI APIへ送信したあと破棄されます。
-                  サンプル再生はAPIキー不要です。
-                </aside>
+            <aside className="notice" role="note">
+              <strong>ご利用上の注意</strong>
+              デモ用途では機密情報・個人情報を含む写真をアップロードしないでください。
+              画像はサーバーに保存せず、解析のためにAI APIへ送信したあと破棄されます。
+              サンプル再生はAPIキー不要です。
+            </aside>
 
-                <aside
-                  className="tipBox"
-                  aria-label="アップロードする写真の目安"
-                >
-                  <strong>どんな写真をアップロードすればよいか</strong>
-                  <ul>
-                    <li>
-                      <em>映っていると良いもの:</em>
-                      作業本体（型枠・配筋・配管・掘削など）、進捗が分かるアングル、資材・重機、養生・安全帯・開口・誘導など。複数枚あると下書きが安定します。
-                    </li>
-                    <li>
-                      <em>関係ない画像の場合:</em>
-                      現場と無関係な写真（風景・料理・画面キャプチャなど）では、抽出できる情報がほぼないため、各項目が「要確認」になります。
-                    </li>
-                  </ul>
-                  <p>
-                    商談では先に「サンプルで試す」を使うと、キー不要で理想の演出を確実に見せられます。
-                  </p>
-                </aside>
-              </>
-            )}
+            <aside
+              className="tipBox"
+              aria-label="アップロードする写真の目安"
+            >
+              <strong>どんな写真をアップロードすればよいか</strong>
+              <ul>
+                <li>
+                  <em>映っていると良いもの:</em>
+                  作業本体（型枠・配筋・配管・掘削など）、進捗が分かるアングル、資材・重機、養生・安全帯・開口・誘導など。複数枚あると下書きが安定します。
+                </li>
+                <li>
+                  <em>関係ない画像の場合:</em>
+                  現場と無関係な写真（風景・料理・画面キャプチャなど）では、抽出できる情報がほぼないため、各項目が「要確認」になります。
+                </li>
+              </ul>
+              <p>
+                商談では先に「サンプルで試す」を使うと、キー不要で理想の演出を確実に見せられます。
+              </p>
+            </aside>
 
             {isMobile && (
               <div className="introCta">
@@ -702,28 +676,31 @@ export default function Home() {
             />
 
             {images.length > 0 && (
-              <details
-                className="photoAccordion"
-                open={photosOpen}
-                onToggle={(event) =>
-                  setPhotosOpen((event.target as HTMLDetailsElement).open)
-                }
-              >
-                <summary>写真 {images.length} 枚を表示</summary>
-                <div className="thumbGrid compactThumbs">
+              <div className="mobilePhotoStrip" aria-label="入力写真">
+                <div className="mobilePhotoStripHeader">
+                  <strong>写真 {images.length} 枚</strong>
+                  <button
+                    type="button"
+                    className="textButton"
+                    onClick={() => setPhotosOpen((open) => !open)}
+                  >
+                    {photosOpen ? "小さく" : "大きく"}
+                  </button>
+                </div>
+                <div
+                  className={`mobilePhotoRail ${
+                    photosOpen ? "isExpanded" : ""
+                  }`}
+                >
                   {images.map((image, index) => (
-                    <div key={image.id} className="thumbCard">
+                    <figure key={image.id} className="mobilePhotoItem">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={image.previewUrl} alt={image.name} />
-                      <div className="thumbMeta">
-                        <strong>
-                          {index + 1}. {image.name}
-                        </strong>
-                      </div>
-                    </div>
+                      <figcaption>{index + 1}</figcaption>
+                    </figure>
                   ))}
                 </div>
-              </details>
+              </div>
             )}
 
             <div className="tabs" role="tablist">

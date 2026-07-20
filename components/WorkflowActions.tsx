@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import type { WorkflowStatus } from "@/lib/types";
 
 type Props = {
@@ -29,88 +30,189 @@ export function WorkflowActions({
   onReset,
   onBack
 }: Props) {
+  const [sheetOpen, setSheetOpen] = useState(false);
+
   const hasDraft =
     status === "draft" || status === "reviewed" || status === "submitted";
 
-  const primary =
-    status === "draft" ? (
-      <button type="button" className="primaryButton" onClick={onReview}>
-        確認する
-        {reviewCount > 0 ? `（${reviewCount}）` : ""}
-      </button>
-    ) : status === "reviewed" ? (
-      <button type="button" className="primaryButton" onClick={onSubmit}>
-        提出する
-      </button>
-    ) : status === "submitted" ? (
-      <button type="button" className="primaryButton" onClick={onPrint}>
-        PDF保存
-      </button>
-    ) : (
-      <button
-        type="button"
-        className="primaryButton"
-        disabled={!canGenerate || isProcessing}
-        onClick={onGenerate}
-      >
-        {isProcessing ? "作成中…" : "AIで下書き"}
-      </button>
+  useEffect(() => {
+    setSheetOpen(false);
+  }, [status]);
+
+  const primaryLabel =
+    status === "draft"
+      ? `確認する${reviewCount > 0 ? `（${reviewCount}）` : ""}`
+      : status === "reviewed"
+        ? "提出する"
+        : status === "submitted"
+          ? "PDF保存"
+          : isProcessing
+            ? "作成中…"
+            : "AIで下書き";
+
+  function runPrimary() {
+    if (status === "draft") onReview();
+    else if (status === "reviewed") onSubmit();
+    else if (status === "submitted") onPrint();
+    else onGenerate();
+  }
+
+  const primaryDisabled = !hasDraft && (!canGenerate || isProcessing);
+
+  if (sticky) {
+    return (
+      <>
+        {sheetOpen && (
+          <button
+            type="button"
+            className="sheetBackdrop no-print"
+            aria-label="操作パネルを閉じる"
+            onClick={() => setSheetOpen(false)}
+          />
+        )}
+
+        <div
+          className={`actionSheet no-print ${sheetOpen ? "isOpen" : "isCollapsed"}`}
+          role="dialog"
+          aria-label="操作"
+        >
+          <button
+            type="button"
+            className="sheetHandle"
+            onClick={() => setSheetOpen((open) => !open)}
+            aria-expanded={sheetOpen}
+          >
+            <span className="sheetHandleBar" />
+            <span className="sheetHandleLabel">
+              {sheetOpen ? "閉じる" : "操作メニュー"}
+            </span>
+          </button>
+
+          {sheetOpen && (
+            <div className="sheetBody">
+              <div className="workflowStatusPills" aria-label="提出ステータス">
+                <span className={status === "draft" ? "active" : ""}>
+                  下書き
+                </span>
+                <span className={status === "reviewed" ? "active" : ""}>
+                  確認済
+                </span>
+                <span
+                  className={
+                    status === "submitted" ? "active success" : ""
+                  }
+                >
+                  提出済
+                </span>
+              </div>
+
+              <div className="sheetSecondaryRow">
+                {onBack && (
+                  <button
+                    type="button"
+                    className="ghostButton"
+                    onClick={() => {
+                      setSheetOpen(false);
+                      onBack();
+                    }}
+                  >
+                    戻る
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="ghostButton"
+                  onClick={() => {
+                    setSheetOpen(false);
+                    onReset();
+                  }}
+                >
+                  クリア
+                </button>
+                {hasDraft && (
+                  <button
+                    type="button"
+                    className="secondaryButton"
+                    onClick={() => {
+                      setSheetOpen(false);
+                      onPrint();
+                    }}
+                  >
+                    PDF
+                  </button>
+                )}
+              </div>
+
+              {status === "submitted" && (
+                <p className="submitMessage sheetSubmitMsg">
+                  提出完了。転記なしで、このまま共有できます。
+                </p>
+              )}
+            </div>
+          )}
+
+          <div className="sheetPrimaryRow">
+            <button
+              type="button"
+              className="primaryButton sheetPrimaryBtn"
+              disabled={primaryDisabled}
+              onClick={runPrimary}
+            >
+              {primaryLabel}
+            </button>
+          </div>
+        </div>
+      </>
     );
+  }
 
   return (
-    <div
-      className={`workflowActions no-print ${sticky ? "workflowSticky" : ""}`}
-    >
-      {!sticky && (
-        <div className="workflowStatusPills" aria-label="提出ステータス">
-          <span className={status === "draft" ? "active" : ""}>下書き</span>
-          <span className={status === "reviewed" ? "active" : ""}>確認済</span>
-          <span className={status === "submitted" ? "active success" : ""}>
-            提出済
-          </span>
-        </div>
-      )}
+    <div className="workflowActions no-print">
+      <div className="workflowStatusPills" aria-label="提出ステータス">
+        <span className={status === "draft" ? "active" : ""}>下書き</span>
+        <span className={status === "reviewed" ? "active" : ""}>確認済</span>
+        <span className={status === "submitted" ? "active success" : ""}>
+          提出済
+        </span>
+      </div>
 
-      <div className={`workflowButtons ${sticky ? "stickyButtons" : ""}`}>
-        {sticky && onBack && (
-          <button type="button" className="ghostButton" onClick={onBack}>
-            戻る
+      <div className="workflowButtons">
+        {!hasDraft && (
+          <button
+            type="button"
+            className="primaryButton"
+            disabled={!canGenerate || isProcessing}
+            onClick={onGenerate}
+          >
+            {isProcessing ? "作成中…" : "AIで下書き"}
           </button>
         )}
 
-        {sticky && hasDraft && (
-          <button type="button" className="ghostButton" onClick={onReset}>
-            クリア
+        {status === "draft" && (
+          <button type="button" className="primaryButton" onClick={onReview}>
+            確認する
+            {reviewCount > 0 ? `（${reviewCount}）` : ""}
           </button>
         )}
 
-        {sticky && hasDraft && status !== "submitted" && (
-          <button type="button" className="secondaryButton" onClick={onPrint}>
-            PDF
+        {status === "reviewed" && (
+          <button type="button" className="primaryButton" onClick={onSubmit}>
+            提出する
           </button>
         )}
 
-        {sticky && primary}
-
-        {!sticky && !hasDraft && primary}
-
-        {!sticky && status === "draft" && primary}
-        {!sticky && status === "reviewed" && primary}
-
-        {!sticky && hasDraft && (
+        {hasDraft && (
           <button type="button" onClick={onPrint}>
             PDFとして保存
           </button>
         )}
 
-        {!sticky && (
-          <button type="button" className="textButton" onClick={onReset}>
-            リセット
-          </button>
-        )}
+        <button type="button" className="textButton" onClick={onReset}>
+          リセット
+        </button>
       </div>
 
-      {status === "submitted" && !sticky && (
+      {status === "submitted" && (
         <p className="submitMessage">
           提出完了。内勤が写真から手作業で転記する必要はありません。要確認欄だけ直せば、このまま共有できます。
         </p>
