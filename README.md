@@ -20,6 +20,7 @@
 - 下書き → 確認済 → 提出済のステータス演出
 - 印刷ダイアログ経由の「PDFとして保存」
 - 詳細データ（フォーム / JSON / CSV）
+- 提出完了後の投資回収CTA（`roi-simulator` へ別タブ、環境変数設定時）
 
 ## セットアップ
 
@@ -34,7 +35,12 @@ cp .env.example .env.local
 ```env
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
 OPENAI_MODEL=tpt-5-nano
+
+# 投資回収CTA（任意）。未設定なら CTA 非表示
+NEXT_PUBLIC_ROI_SIMULATOR_URL=http://localhost:5173
 ```
+
+`NEXT_PUBLIC_ROI_SIMULATOR_URL` を設定すると、提出完了後に投資回収シミュレーター（`roi-simulator`）への導線が表示されます。ローカルでは `roi-simulator` を `npm run dev`（5173）で起動しておくと確認できます。
 
 起動:
 
@@ -53,6 +59,7 @@ http://localhost:3000
 3. 「現場太郎さんから写真が届きました」演出のあと、下書きが埋まる
 4. 要確認欄を直し、「確認する」→「提出する」
 5. 「PDFとして保存」→ 印刷ダイアログで PDF 保存
+6. 提出後、「投資回収の目安を見る」→ 別タブで概算・回収期間を確認（`NEXT_PUBLIC_ROI_SIMULATOR_URL` 設定時）
 
 自分の写真で試す場合は画像を追加して「AIで下書き作成」を押します。
 

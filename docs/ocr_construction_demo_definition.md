@@ -48,15 +48,24 @@
 5. 下書き → 確認済 → 提出済
 6. PDF として保存（`window.print` + 印刷 CSS）
 7. 詳細データタブで OCR 項目確認
+8. 提出完了後、投資回収CTA → `roi-simulator`（別タブ）
 
-## 6. 演出
+## 6. ROI 連動
+
+- 正本: ワークスペース内 `roi-simulator`（試算ロジックはデモ側に持たない）
+- 環境変数: `NEXT_PUBLIC_ROI_SIMULATOR_URL`
+- 遷移: `/?kit=report-auto&industry=construction&cat=internal&from=ocr-construction`
+- 開き方: PC・スマホとも別タブ（iframe なし）
+- 未設定時: CTA 非表示（デモ本体はそのまま動作）
+
+## 7. 演出
 
 - Loading: receiving → reading → drafting
 - Before/After: 手作業約 15 分 vs AI 約 20 秒
 - ChatArrival: 「現場太郎さんから写真が届きました」
 - Success: 提出済 + 転記不要メッセージ
 
-## 7. Input / Output
+## 8. Input / Output
 
 ### Input
 
@@ -70,15 +79,16 @@
 - OcrResult（詳細タブ）
 - Print / PDF プレビュー
 
-## 8. 受け入れ条件
+## 9. 受け入れ条件
 
 - [ ] キーなしでサンプル再生が報告書・朝礼とも最後まで通る
 - [ ] 実画像（複数）で下書きが返り、編集・要確認・提出・印刷ができる
 - [ ] 印刷プレビューでテンプレ本文だけが見える
 - [ ] 詳細データタブで従来の項目一覧を確認できる
 - [ ] 個人情報注意のノーティスを維持
+- [ ] `NEXT_PUBLIC_ROI_SIMULATOR_URL` 設定時、提出完了後に投資回収CTAが別タブで開く
 
-## 9. Phase 2
+## 10. Phase 2
 
 - 音声読み上げ
 - 昨日差分ハイライト

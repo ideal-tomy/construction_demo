@@ -899,6 +899,46 @@ footer {
   line-height: 1.7;
 }
 
+.roiPaybackCta {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+}
+
+.roiPaybackCtaTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.roiPaybackCtaLead {
+  margin: 6px 0 12px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.roiPaybackCtaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent);
+  text-decoration: none;
+}
+
+.roiPaybackCtaButton:hover {
+  filter: brightness(0.95);
+}
+
 .emptyState.compact {
   min-height: 220px;
 }

@@ -7,6 +7,7 @@ import { ModeSelector } from "@/components/ModeSelector";
 import { MultiImageUploader } from "@/components/MultiImageUploader";
 import { ProcessStepper } from "@/components/ProcessStepper";
 import { ReportTemplateView } from "@/components/ReportTemplateView";
+import { RoiPaybackCta } from "@/components/RoiPaybackCta";
 import { SampleLauncher } from "@/components/SampleLauncher";
 import { ToolboxTemplateView } from "@/components/ToolboxTemplateView";
 import { WorkflowActions } from "@/components/WorkflowActions";
@@ -729,9 +730,12 @@ export default function Home() {
             </div>
 
             {status === "submitted" && (
-              <p className="submitMessage mobileSubmitMsg">
-                提出完了。転記なしで、このまま共有できます。
-              </p>
+              <>
+                <p className="submitMessage mobileSubmitMsg">
+                  提出完了。転記なしで、このまま共有できます。
+                </p>
+                <RoiPaybackCta />
+              </>
             )}
 
             <div className="mobileStickySpacer" aria-hidden />

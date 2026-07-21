@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RoiPaybackCta } from "@/components/RoiPaybackCta";
 import type { WorkflowStatus } from "@/lib/types";
 
 type Props = {
@@ -144,9 +145,12 @@ export function WorkflowActions({
               </div>
 
               {status === "submitted" && (
-                <p className="submitMessage sheetSubmitMsg">
-                  提出完了。転記なしで、このまま共有できます。
-                </p>
+                <>
+                  <p className="submitMessage sheetSubmitMsg">
+                    提出完了。転記なしで、このまま共有できます。
+                  </p>
+                  <RoiPaybackCta />
+                </>
               )}
             </div>
           )}
@@ -213,9 +217,12 @@ export function WorkflowActions({
       </div>
 
       {status === "submitted" && (
-        <p className="submitMessage">
-          提出完了。内勤が写真から手作業で転記する必要はありません。要確認欄だけ直せば、このまま共有できます。
-        </p>
+        <>
+          <p className="submitMessage">
+            提出完了。内勤が写真から手作業で転記する必要はありません。要確認欄だけ直せば、このまま共有できます。
+          </p>
+          <RoiPaybackCta />
+        </>
       )}
     </div>
   );

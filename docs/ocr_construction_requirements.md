@@ -48,6 +48,7 @@
 
 - 欄が順に埋まる演出
 - 提出後の「内勤の転記が不要」メッセージ
+- 提出後の投資回収導線（`roi-simulator` へ別タブ。`NEXT_PUBLIC_ROI_SIMULATOR_URL` 設定時）
 
 ### Won't（Phase 1）
 
