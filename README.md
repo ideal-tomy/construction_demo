@@ -33,7 +33,7 @@ cp .env.example .env.local
 
 ```env
 OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxx
-OPENAI_MODEL=gpt-4.1-mini
+OPENAI_MODEL=tpt-5-nano
 ```
 
 起動:

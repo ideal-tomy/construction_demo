@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     });
 
     const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      model: process.env.OPENAI_MODEL || "tpt-5-nano",
       temperature: 0,
       input: [
         {
