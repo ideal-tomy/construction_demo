@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "現場写真 → 報告書 / 朝礼メモ | AIデモ",
+  title: "建設の記録デモ（3体験）",
   description:
-    "建設現場の写真から報告書下書きと朝礼メモを自動作成する体験デモ"
+    "撮る→整える→報告・管理に載せる。建設現場の写真分類・報告書下書き・現場オペを体験できます。",
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ja">

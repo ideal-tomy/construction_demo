@@ -2,7 +2,7 @@ const ROI_PARAMS = {
   kit: "report-auto",
   industry: "construction",
   cat: "internal",
-  from: "ocr-construction",
+  from: "construction-demo",
   brand: "ideal",
 } as const;
 
