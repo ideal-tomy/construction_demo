@@ -27,6 +27,8 @@ OPENAI_MODEL=gpt-5-nano
 NEXT_PUBLIC_ROI_SIMULATOR_URL=https://roi-simulator-eta.vercel.app
 ```
 
+本番: https://construction-demo-two.vercel.app
+
 起動:
 
 ```bash
