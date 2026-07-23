@@ -2,7 +2,8 @@ const ROI_PARAMS = {
   kit: "report-auto",
   industry: "construction",
   cat: "internal",
-  from: "ocr-construction"
+  from: "ocr-construction",
+  brand: "ideal",
 } as const;
 
 /** roi-simulator への導線URL。未設定時は null（CTA非表示）。 */

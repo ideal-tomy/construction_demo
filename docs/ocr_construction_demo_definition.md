@@ -2,9 +2,9 @@
 
 ## 1. Demo Identity
 
-- Demo ID: `ocr-construction-demo`
+- Demo ID: `construction-report-draft`
 - Demo Name: 建設現場写真 → 報告書 / 朝礼メモ
-- Repository: `ocr-demo-nextjs`
+- Repository: `construction_demo`（https://github.com/ideal-tomy/construction_demo）
 - Demo Type: Upload / Workflow
 - Requirement File: `docs/ocr_construction_requirements.md`
 
@@ -57,6 +57,7 @@
 - 遷移: `/?kit=report-auto&industry=construction&cat=internal&from=ocr-construction`
 - 開き方: PC・スマホとも別タブ（iframe なし）
 - 未設定時: CTA 非表示（デモ本体はそのまま動作）
+- 出口: 「見積もりを閉じる」→ 閲覧モード（業界選択可）。正本 [`roi-simulator/docs/demo-roi-integration-playbook.md`](../../roi-simulator/docs/demo-roi-integration-playbook.md) §1.2
 
 ## 7. 演出
 
