@@ -432,7 +432,18 @@ export default function Home() {
   }
 
   function handlePrint() {
-    window.print();
+    setResultTab("document");
+    // 下書き編集UIの印刷を防ぐ（正式帳票表示時のみ）
+    if (
+      mode === "report" &&
+      status !== "reviewed" &&
+      status !== "submitted"
+    ) {
+      setStatus("reviewed");
+      window.setTimeout(() => window.print(), 100);
+      return;
+    }
+    window.setTimeout(() => window.print(), 40);
   }
 
   const showIntro = !isMobile || mobileStep === "intro";
@@ -780,111 +791,115 @@ export default function Home() {
         )}
 
         {showResult && isMobile && (
-          <section className="resultScreen mobileResult no-print" ref={resultTopRef}>
-            <ChatArrivalToast
-              visible={chatVisible}
-              senderName={chatSender}
-              photoCount={chatCount}
-              onDismiss={() => setChatVisible(false)}
-            />
+          <section className="resultScreen mobileResult" ref={resultTopRef}>
+            <div className="no-print">
+              <ChatArrivalToast
+                visible={chatVisible}
+                senderName={chatSender}
+                photoCount={chatCount}
+                onDismiss={() => setChatVisible(false)}
+              />
 
-            <div className="mobileResultHeader">
-              <div>
-                <p className="mobileResultEyebrow">
-                  {mode === "report" ? "現場状況報告書" : "朝礼メモ"}
-                </p>
-                <h2>
-                  {status === "submitted"
-                    ? "提出済"
-                    : status === "reviewed"
-                      ? "確認済"
-                      : status === "ready"
-                        ? "受信完了"
-                        : isProcessing
-                          ? "作成中…"
-                          : "下書き"}
-                </h2>
+              <div className="mobileResultHeader">
+                <div>
+                  <p className="mobileResultEyebrow">
+                    {mode === "report" ? "現場状況報告書" : "朝礼メモ"}
+                  </p>
+                  <h2>
+                    {status === "submitted"
+                      ? "提出済"
+                      : status === "reviewed"
+                        ? "確認済"
+                        : status === "ready"
+                          ? "受信完了"
+                          : isProcessing
+                            ? "作成中…"
+                            : "下書き"}
+                  </h2>
+                </div>
+                {metrics && (
+                  <div className="mobileMetricStrip" aria-label="概要">
+                    <span>{metrics.images}枚</span>
+                    <span>要確認 {metrics.review}</span>
+                    <span>{elapsedLabel}</span>
+                  </div>
+                )}
               </div>
-              {metrics && (
-                <div className="mobileMetricStrip" aria-label="概要">
-                  <span>{metrics.images}枚</span>
-                  <span>要確認 {metrics.review}</span>
-                  <span>{elapsedLabel}</span>
+
+              <ProcessStepper
+                status={status}
+                error={error}
+                showBeforeAfter={hasDraft}
+                elapsedLabel={elapsedLabel}
+                showProgress={showUploadProgress}
+              />
+
+              {images.length > 0 && (
+                <div className="mobilePhotoStrip" aria-label="入力写真">
+                  <div className="mobilePhotoStripHeader">
+                    <strong>写真 {images.length} 枚</strong>
+                    <button
+                      type="button"
+                      className="textButton"
+                      onClick={() => setPhotosOpen((open) => !open)}
+                    >
+                      {photosOpen ? "小さく" : "大きく"}
+                    </button>
+                  </div>
+                  <div
+                    className={`mobilePhotoRail ${
+                      photosOpen ? "isExpanded" : ""
+                    }`}
+                  >
+                    {images.map((image, index) => (
+                      <figure key={image.id} className="mobilePhotoItem">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={image.previewUrl} alt={image.name} />
+                        <figcaption>{index + 1}</figcaption>
+                      </figure>
+                    ))}
+                  </div>
                 </div>
               )}
-            </div>
 
-            <ProcessStepper
-              status={status}
-              error={error}
-              showBeforeAfter={hasDraft}
-              elapsedLabel={elapsedLabel}
-              showProgress={showUploadProgress}
-            />
-
-            {images.length > 0 && (
-              <div className="mobilePhotoStrip" aria-label="入力写真">
-                <div className="mobilePhotoStripHeader">
-                  <strong>写真 {images.length} 枚</strong>
-                  <button
-                    type="button"
-                    className="textButton"
-                    onClick={() => setPhotosOpen((open) => !open)}
-                  >
-                    {photosOpen ? "小さく" : "大きく"}
-                  </button>
-                </div>
-                <div
-                  className={`mobilePhotoRail ${
-                    photosOpen ? "isExpanded" : ""
-                  }`}
+              <div className="tabs" role="tablist">
+                <button
+                  type="button"
+                  className={resultTab === "document" ? "active" : ""}
+                  onClick={() => setResultTab("document")}
                 >
-                  {images.map((image, index) => (
-                    <figure key={image.id} className="mobilePhotoItem">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={image.previewUrl} alt={image.name} />
-                      <figcaption>{index + 1}</figcaption>
-                    </figure>
-                  ))}
-                </div>
+                  成果物
+                </button>
+                <button
+                  type="button"
+                  className={resultTab === "detail" ? "active" : ""}
+                  onClick={() => setResultTab("detail")}
+                >
+                  詳細
+                </button>
               </div>
-            )}
-
-            <div className="tabs" role="tablist">
-              <button
-                type="button"
-                className={resultTab === "document" ? "active" : ""}
-                onClick={() => setResultTab("document")}
-              >
-                成果物
-              </button>
-              <button
-                type="button"
-                className={resultTab === "detail" ? "active" : ""}
-                onClick={() => setResultTab("detail")}
-              >
-                詳細
-              </button>
             </div>
 
             <div className="mobileDocScroll">
               {resultTab === "document" ? (
                 documentView
               ) : (
-                <DetailDataPanel ocrDetail={draft?.ocrDetail} />
+                <div className="no-print">
+                  <DetailDataPanel ocrDetail={draft?.ocrDetail} />
+                </div>
               )}
             </div>
 
             {status === "submitted" && (
-              <>
+              <div className="no-print">
                 <p className="submitMessage mobileSubmitMsg">
                   提出完了。転記なしで、このまま共有できます。
                 </p>
                 <RoiPaybackCta />
-              </>
+              </div>
             )}
 
-            <div className="mobileStickySpacer" aria-hidden />
+            <div className="mobileStickySpacer no-print" aria-hidden />
           </section>
         )}
 

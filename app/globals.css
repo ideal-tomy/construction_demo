@@ -889,6 +889,14 @@ footer {
   background: white;
 }
 
+.workflowHint {
+  flex: 1 0 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .submitMessage {
   margin: 12px 0 0;
   padding: 12px 14px;
@@ -2023,6 +2031,14 @@ footer {
     display: none !important;
   }
 
+  /* 下書き編集UIは印刷しない（送付用の正式帳票のみ） */
+  .reportTemplate,
+  .docPhotoSheet,
+  .emptyState,
+  .detailPanel {
+    display: none !important;
+  }
+
   .workspace {
     display: block !important;
     border: 0 !important;
@@ -2030,8 +2046,13 @@ footer {
     box-shadow: none !important;
   }
 
-  .rightColumn {
+  .rightColumn,
+  .mobileDocScroll,
+  .mobileResult {
     padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
   }
 
   .docTemplate {
@@ -2040,21 +2061,19 @@ footer {
 
   .docField,
   .docBlock,
-  .docBlockWrap,
-  .docPhotoSheet,
-  .docPhotoCell {
+  .docBlockWrap {
     break-inside: avoid;
     background: white !important;
   }
 
   .printForm {
+    display: block !important;
     border-color: #000 !important;
     padding: 0 !important;
   }
 
   .printFormSection {
     margin-top: 0.28rem !important;
-    break-inside: avoid-page;
   }
 
   .printFormPhotoSection {
@@ -2079,11 +2098,13 @@ footer {
   }
 
   .printFormPhotoGrid {
+    display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
   }
 
   .printFormPhoto img {
     height: 56px !important;
+    max-height: 56px !important;
     aspect-ratio: auto !important;
   }
 

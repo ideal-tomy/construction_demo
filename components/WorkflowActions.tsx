@@ -37,6 +37,8 @@ export function WorkflowActions({
 
   const hasDraft =
     status === "draft" || status === "reviewed" || status === "submitted";
+  /** 送付用PDFは正式帳票表示後のみ */
+  const canPrint = status === "reviewed" || status === "submitted";
 
   useEffect(() => {
     setSheetOpen(false);
@@ -148,7 +150,7 @@ export function WorkflowActions({
                 >
                   クリア
                 </button>
-                {hasDraft && (
+                {canPrint && (
                   <button
                     type="button"
                     className="secondaryButton"
@@ -211,10 +213,15 @@ export function WorkflowActions({
         )}
 
         {status === "draft" && (
-          <button type="button" className="primaryButton" onClick={onReview}>
-            確認する
-            {reviewCount > 0 ? `（${reviewCount}）` : ""}
-          </button>
+          <>
+            <button type="button" className="primaryButton" onClick={onReview}>
+              確認する
+              {reviewCount > 0 ? `（${reviewCount}）` : ""}
+            </button>
+            <p className="workflowHint">
+              確認すると送付用の正式帳票になり、PDF保存できます
+            </p>
+          </>
         )}
 
         {status === "reviewed" && (
@@ -223,7 +230,7 @@ export function WorkflowActions({
           </button>
         )}
 
-        {hasDraft && (
+        {canPrint && (
           <button type="button" onClick={onPrint}>
             PDFとして保存
           </button>
