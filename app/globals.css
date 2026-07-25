@@ -1929,12 +1929,27 @@ footer {
   gap: 0.6rem;
 }
 .photoThumb {
+  position: relative;
   min-height: 5.5rem;
-  padding: 0.65rem;
+  aspect-ratio: 4 / 3;
   border-radius: 0.65rem;
+  overflow: hidden;
+  background: #1a1a1a;
+}
+.photoThumbImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photoThumbMeta {
+  position: absolute;
+  inset: auto 0 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  gap: 0.1rem;
+  padding: 1.6rem 0.65rem 0.55rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.78));
 }
 .photoThumbName {
   font-size: 0.7rem;
@@ -2000,15 +2015,31 @@ footer {
   padding: 0;
   list-style: none;
 }
-.photoFolder li {
+.photoFolder li,
+.photoFolderItem {
   display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.45rem 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
   border-bottom: 1px solid #444;
   font-size: 0.85rem;
 }
-.photoFolder strong { color: #fff; }
+.photoFolderImg {
+  flex: 0 0 auto;
+  width: 4.5rem;
+  height: 3.35rem;
+  border-radius: 0.4rem;
+  object-fit: cover;
+  background: #1a1a1a;
+}
+.photoFolderMeta {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.photoFolder strong { color: #fff; word-break: break-all; }
 .photoFolder span { color: #bbb; }
 .photoNext {
   margin-top: 1.25rem;

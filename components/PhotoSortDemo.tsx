@@ -63,13 +63,17 @@ export function PhotoSortDemo() {
         <h2 className="photoPanelTitle">Before · IMGの山</h2>
         <ul className="photoGrid">
           {photos.map((p) => (
-            <li
-              key={p.id}
-              className="photoThumb"
-              style={{ background: p.color }}
-            >
-              <span className="photoThumbName">{p.originalName}</span>
-              <span className="photoThumbLabel">{p.label}</span>
+            <li key={p.id} className="photoThumb">
+              <img
+                src={p.src}
+                alt={p.label}
+                className="photoThumbImg"
+                style={{ background: p.color }}
+              />
+              <span className="photoThumbMeta">
+                <span className="photoThumbName">{p.originalName}</span>
+                <span className="photoThumbLabel">{p.label}</span>
+              </span>
             </li>
           ))}
         </ul>
@@ -115,9 +119,16 @@ export function PhotoSortDemo() {
                 {results
                   .filter((r) => r.folder === folder)
                   .map((r) => (
-                    <li key={r.id}>
-                      <strong>{r.newName}</strong>
-                      <span>{r.description}</span>
+                    <li key={r.id} className="photoFolderItem">
+                      <img
+                        src={r.src}
+                        alt={r.folder}
+                        className="photoFolderImg"
+                      />
+                      <div className="photoFolderMeta">
+                        <strong>{r.newName}</strong>
+                        <span>{r.description}</span>
+                      </div>
                     </li>
                   ))}
               </ul>
