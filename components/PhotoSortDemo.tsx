@@ -135,8 +135,10 @@ export function PhotoSortDemo() {
             </div>
           ))}
           <div className="photoNext">
-            <p className="photoNextLead">整えた写真が、報告書の下書きになる</p>
-            <Link href="/report" className="photoPrimaryLink">
+            <p className="photoNextLead">
+              整えた写真を載せたまま、報告書の下書きへ進みます
+            </p>
+            <Link href="/report?from=photo" className="photoPrimaryLink">
               ② 報告書下書きへ →
             </Link>
           </div>

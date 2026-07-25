@@ -1,4 +1,36 @@
-import type { ReportDraft, ToolboxBriefing } from "@/lib/types";
+import { constructionPhotoSample } from "@/lib/photoSample";
+import type { ReportDraft, SourceImage, ToolboxBriefing } from "@/lib/types";
+
+export const PHOTO_FLOW_SAMPLE_ID = "report-from-photo";
+
+/** ①→②着地用: 写真だけ入った空の日報テンプレ */
+export function createReportShell(
+  title: string,
+  sourceImages: SourceImage[]
+): ReportDraft {
+  return {
+    templateId: "site_daily_report_v1",
+    title,
+    header: {
+      projectName: "",
+      siteName: "",
+      date: "",
+      reporter: "",
+      weather: ""
+    },
+    sections: {
+      workSummary: "",
+      progress: "",
+      materials: "",
+      safety: "",
+      photoFindings: "",
+      nextPlan: "",
+      requests: ""
+    },
+    reviewFields: [],
+    sourceImages
+  };
+}
 
 export type SampleSet = {
   id: string;
@@ -6,7 +38,11 @@ export type SampleSet = {
   label: string;
   senderName: string;
   imagePaths: string[];
+  /** 表示用ファイル名。未指定時は path の末尾を使う */
+  imageNames?: string[];
   draft: ReportDraft | ToolboxBriefing;
+  /** true のとき「サンプルで試す」一覧には出さない（①→②導線専用） */
+  hidden?: boolean;
 };
 
 const reportA: ReportDraft = {
@@ -252,7 +288,84 @@ const toolboxB: ToolboxBriefing = {
   }
 };
 
+const reportFromPhoto: ReportDraft = {
+  templateId: "site_daily_report_v1",
+  title: "現場状況報告書（日報）",
+  header: {
+    projectName: "現場A 住宅新築工事",
+    siteName: "基礎工区",
+    date: "2026-08-02",
+    reporter: "現場太郎",
+    weather: "晴れ / 気温28℃"
+  },
+  sections: {
+    workSummary:
+      "基礎掘削の完了確認後、鉄筋配筋および型枠設置を実施。朝礼にて安全確認を行い作業を開始した。",
+    progress:
+      "基礎掘削完了。配筋は検査前状態まで進捗。型枠組立は完了。全体進捗は計画どおり。",
+    materials:
+      "異形鉄筋、型枠パネル、セパレーター、砕石。重機はバックホウ（掘削・整地）を使用。",
+    safety:
+      "朝礼にて全員ヘルメット・安全ベスト着用を確認。重機作業半径への立入禁止と誘導員配置を徹底。",
+    photoFindings:
+      "写真1: 基礎掘削完了状況。写真2: 鉄筋配筋（検査前）。写真3: 型枠組立完了。写真4: 朝礼・安全確認の記録。",
+    nextPlan:
+      "配筋検査立会い → コンクリート打設準備 → 打設後の養生計画の確認。",
+    requests:
+      "配筋検査の立会い時刻確定を希望。生コン手配数量の最終確認をお願いします。"
+  },
+  reviewFields: [
+    {
+      path: "sections.requests",
+      reason: "検査立会い時刻は発注者・検査員との調整が必要"
+    },
+    {
+      path: "header.weather",
+      reason: "気温は推定値のため現地記録で確認推奨"
+    }
+  ],
+  sourceImages: [],
+  ocrDetail: {
+    documentType: "現場写真セット（基礎〜型枠）",
+    summary: "基礎掘削・配筋・型枠・朝礼安全確認の整理済み写真群",
+    fields: [
+      {
+        key: "work_type",
+        label: "作業種別",
+        value: "基礎工事 / 鉄筋 / 型枠",
+        confidence: 94,
+        needsReview: false
+      },
+      {
+        key: "safety_check",
+        label: "安全確認",
+        value: "朝礼実施・保護具着用確認",
+        confidence: 91,
+        needsReview: false
+      },
+      {
+        key: "next_gate",
+        label: "次工程ゲート",
+        value: "配筋検査前",
+        confidence: 86,
+        needsReview: true
+      }
+    ],
+    warnings: ["検査立会い時刻は写真から確定できないため要確認"]
+  }
+};
+
 export const SAMPLE_SETS: SampleSet[] = [
+  {
+    id: PHOTO_FLOW_SAMPLE_ID,
+    mode: "report",
+    label: "写真整理からの日報",
+    senderName: "現場太郎",
+    imagePaths: constructionPhotoSample.results.map((r) => r.src),
+    imageNames: constructionPhotoSample.results.map((r) => r.newName),
+    draft: reportFromPhoto,
+    hidden: true
+  },
   {
     id: "report-a",
     mode: "report",
@@ -302,5 +415,7 @@ export const SAMPLE_SETS: SampleSet[] = [
 ];
 
 export function getSamplesForMode(mode: "report" | "toolbox") {
-  return SAMPLE_SETS.filter((sample) => sample.mode === mode);
+  return SAMPLE_SETS.filter(
+    (sample) => sample.mode === mode && !sample.hidden
+  );
 }

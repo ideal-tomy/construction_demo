@@ -83,9 +83,32 @@ export function ReportTemplateView({
         <p className="docEyebrow">SITE DAILY REPORT</p>
         <h3>{draft.title}</h3>
         <p className="docSub">
-          AI下書き / 要確認 {draft.reviewFields.length} 件
+          {draft.reviewFields.length > 0
+            ? `AI下書き / 要確認 ${draft.reviewFields.length} 件`
+            : "写真添付済みテンプレート（AI下書き前）"}
         </p>
       </header>
+
+      {draft.sourceImages.length > 0 ? (
+        <section className="docPhotoSheet" aria-label="添付写真">
+          <div className="docPhotoSheetHead">
+            <strong>添付写真</strong>
+            <span>{draft.sourceImages.length} 枚</span>
+          </div>
+          <div className="docPhotoSheetGrid">
+            {draft.sourceImages.map((image, index) => (
+              <figure key={`${image.name}-${index}`} className="docPhotoCell">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={image.previewUrl} alt={image.name} />
+                <figcaption>
+                  <em>写真{index + 1}</em>
+                  <span>{image.name}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="docGrid">
         {HEADER_FIELDS.map((field) => {
@@ -93,6 +116,7 @@ export function ReportTemplateView({
           const path = `header.${field.key}`;
           const revealed = revealCount > index;
           const review = needsReview(path);
+          const value = draft.header[field.key];
           return (
             <label
               key={field.key}
@@ -106,14 +130,17 @@ export function ReportTemplateView({
               </span>
               {editable ? (
                 <input
-                  value={draft.header[field.key]}
+                  value={value}
+                  placeholder="（未記入）"
                   onChange={(event) => {
                     onHeaderChange(field.key, event.target.value);
                     if (review) onClearReview(path);
                   }}
                 />
               ) : (
-                <strong>{revealed ? draft.header[field.key] : "…"}</strong>
+                <strong>
+                  {revealed ? value || "（未記入）" : "…"}
+                </strong>
               )}
               {review && revealed && <small>{reviewReason(path)}</small>}
             </label>
@@ -128,7 +155,8 @@ export function ReportTemplateView({
           const revealed = revealCount > index;
           const review = needsReview(path);
           const isOpen = !compact || openSections.has(field.key);
-          const preview = draft.sections[field.key].slice(0, 42);
+          const value = draft.sections[field.key];
+          const preview = value.slice(0, 42);
 
           return (
             <div
@@ -154,7 +182,11 @@ export function ReportTemplateView({
 
               {compact && !isOpen && (
                 <p className="docCollapsedPreview no-print">
-                  {revealed ? `${preview}${preview.length >= 42 ? "…" : ""}` : "記入中…"}
+                  {revealed
+                    ? preview
+                      ? `${preview}${preview.length >= 42 ? "…" : ""}`
+                      : "（未記入）"
+                    : "記入中…"}
                 </p>
               )}
 
@@ -172,14 +204,15 @@ export function ReportTemplateView({
                 {editable ? (
                   <textarea
                     rows={compact ? 2 : 3}
-                    value={draft.sections[field.key]}
+                    value={value}
+                    placeholder="（未記入）"
                     onChange={(event) => {
                       onSectionChange(field.key, event.target.value);
                       if (review) onClearReview(path);
                     }}
                   />
                 ) : (
-                  <p>{revealed ? draft.sections[field.key] : "記入中…"}</p>
+                  <p>{revealed ? value || "（未記入）" : "記入中…"}</p>
                 )}
                 {review && revealed && <small>{reviewReason(path)}</small>}
               </label>

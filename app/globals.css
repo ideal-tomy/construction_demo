@@ -980,6 +980,343 @@ footer {
   margin-bottom: 14px;
 }
 
+.docPhotoSheet {
+  margin: 0 0 16px;
+  border: 1px solid #c5ccd6;
+  background: #fff;
+}
+
+.docPhotoSheetHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid #c5ccd6;
+  background: #eef2f6;
+  font-size: 0.8rem;
+}
+
+.docPhotoSheetHead strong {
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.docPhotoSheetHead span {
+  color: #64748b;
+  font-weight: 700;
+}
+
+.docPhotoSheetGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.docPhotoCell {
+  margin: 0;
+  border-right: 1px solid #d7dde6;
+  border-bottom: 1px solid #d7dde6;
+  background: #f8fafc;
+}
+
+.docPhotoCell:nth-child(2n) {
+  border-right: 0;
+}
+
+.docPhotoCell img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.docPhotoCell figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.55rem 0.55rem;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.docPhotoCell em {
+  font-style: normal;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.docPhotoCell span {
+  font-size: 0.68rem;
+  color: #64748b;
+  word-break: break-all;
+  line-height: 1.35;
+}
+
+@media (max-width: 720px) {
+  .docPhotoSheetGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .docPhotoCell,
+  .docPhotoCell:nth-child(2n) {
+    border-right: 0;
+  }
+}
+
+/* ===== Formal sendable report (確認後・A4 1〜2枚想定) ===== */
+.printForm {
+  margin: 0;
+  padding: 0.7rem 0.65rem 0.75rem;
+  border: 1px solid #1f2937;
+  background: #fff;
+  color: #111;
+  font-family:
+    "Hiragino Mincho ProN",
+    "Yu Mincho",
+    "YuMincho",
+    "Noto Serif JP",
+    serif;
+}
+
+.printFormTop {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #111;
+}
+
+.printFormEyebrow {
+  margin: 0 0 0.2rem;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #334155;
+}
+
+.printFormTopMain h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.printFormLead {
+  margin: 0.3rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: #1f2937;
+}
+
+.printFormMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+  min-width: 7.2rem;
+}
+
+.printFormStamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.6rem;
+  padding: 0.25rem 0.45rem;
+  border: 2px solid #111;
+  background: #111;
+  color: #fff;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.printFormMeta dl {
+  margin: 0;
+  width: 100%;
+}
+
+.printFormMeta dl > div {
+  display: grid;
+  grid-template-columns: 2.8rem 1fr;
+  gap: 0.25rem;
+  padding: 0.12rem 0;
+  border-top: 1px solid #cbd5e1;
+  font-size: 0.68rem;
+}
+
+.printFormMeta dt {
+  color: #475569;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-weight: 700;
+}
+
+.printFormMeta dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+}
+
+.printFormSection {
+  margin-top: 0.4rem;
+  border: 1px solid #111;
+}
+
+.printFormSectionTitle {
+  margin: 0;
+  padding: 0.28rem 0.5rem;
+  background: #4b5563;
+  color: #fff;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.printFormTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.printFormTable th,
+.printFormTable td {
+  padding: 0.32rem 0.5rem;
+  border-top: 1px solid #94a3b8;
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+.printFormTable th {
+  width: 6.2rem;
+  background: #f1f5f9;
+  color: #1e293b;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-align: left;
+  border-right: 1px solid #94a3b8;
+}
+
+.printFormTableCompact tr:first-child th,
+.printFormTableCompact tr:first-child td {
+  border-top: 0;
+}
+
+.printFormBody {
+  padding: 0.4rem 0.55rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 存在確認用: 4カラム1行の小さめサムネ */
+.printFormPhotoSection {
+  break-inside: avoid;
+}
+
+.printFormPhotoGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.printFormPhoto {
+  margin: 0;
+  border-top: 1px solid #94a3b8;
+  border-right: 1px solid #94a3b8;
+  background: #f8fafc;
+  min-width: 0;
+}
+
+.printFormPhoto:last-child {
+  border-right: 0;
+}
+
+.printFormPhoto img {
+  display: block;
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  background: #e2e8f0;
+}
+
+.printFormPhoto figcaption {
+  padding: 0.2rem 0.25rem 0.28rem;
+  border-top: 1px solid #cbd5e1;
+  background: #fff;
+  text-align: center;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+}
+
+.printFormPhoto strong {
+  font-size: 0.62rem;
+  color: #111;
+  font-weight: 800;
+}
+
+.printFormFooter {
+  margin-top: 0.5rem;
+  padding-top: 0.35rem;
+  border-top: 1px solid #94a3b8;
+  color: #475569;
+  font-family:
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+  font-size: 0.66rem;
+  line-height: 1.4;
+}
+
+.printFormFooter p {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .printFormTop {
+    grid-template-columns: 1fr;
+  }
+
+  .printFormMeta {
+    align-items: stretch;
+  }
+
+  .printFormMeta dd {
+    text-align: left;
+  }
+
+  .printFormPhotoGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .printFormPhoto img {
+    height: 52px;
+  }
+}
+
 .docField,
 .docBlock {
   display: block;
@@ -1703,9 +2040,66 @@ footer {
 
   .docField,
   .docBlock,
-  .docBlockWrap {
+  .docBlockWrap,
+  .docPhotoSheet,
+  .docPhotoCell {
     break-inside: avoid;
     background: white !important;
+  }
+
+  .printForm {
+    border-color: #000 !important;
+    padding: 0 !important;
+  }
+
+  .printFormSection {
+    margin-top: 0.28rem !important;
+    break-inside: avoid-page;
+  }
+
+  .printFormPhotoSection {
+    break-inside: avoid !important;
+  }
+
+  .printFormSectionTitle {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.65rem !important;
+    background: #333 !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .printFormBody,
+  .printFormTable th,
+  .printFormTable td {
+    padding: 0.24rem 0.4rem !important;
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+  }
+
+  .printFormPhotoGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .printFormPhoto img {
+    height: 56px !important;
+    aspect-ratio: auto !important;
+  }
+
+  .printFormTopMain h3 {
+    font-size: 1.05rem !important;
+  }
+
+  .printFormLead {
+    font-size: 0.68rem !important;
+  }
+
+  .printFormStamp {
+    background: #000 !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .docCollapsedPreview,

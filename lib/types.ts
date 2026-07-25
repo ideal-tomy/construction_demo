@@ -17,6 +17,7 @@ export type DemoMode = "report" | "toolbox";
 
 export type WorkflowStatus =
   | "idle"
+  | "ready"
   | "receiving"
   | "reading"
   | "drafting"

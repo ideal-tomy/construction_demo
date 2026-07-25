@@ -7,13 +7,18 @@ import { DetailDataPanel } from "@/components/DetailDataPanel";
 import { ModeSelector } from "@/components/ModeSelector";
 import { MultiImageUploader } from "@/components/MultiImageUploader";
 import { ProcessStepper } from "@/components/ProcessStepper";
+import { ReportPrintView } from "@/components/ReportPrintView";
 import { ReportTemplateView } from "@/components/ReportTemplateView";
 import { RoiPaybackCta } from "@/components/RoiPaybackCta";
 import { SampleLauncher } from "@/components/SampleLauncher";
 import { ToolboxTemplateView } from "@/components/ToolboxTemplateView";
 import { WorkflowActions } from "@/components/WorkflowActions";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { SAMPLE_SETS } from "@/lib/samples";
+import {
+  PHOTO_FLOW_SAMPLE_ID,
+  SAMPLE_SETS,
+  createReportShell
+} from "@/lib/samples";
 import type {
   DemoMode,
   DraftResult,
@@ -49,14 +54,23 @@ export default function Home() {
   const [elapsedLabel, setElapsedLabel] = useState("約20秒");
   const timersRef = useRef<number[]>([]);
   const resultTopRef = useRef<HTMLDivElement>(null);
+  const photoFlowStartedRef = useRef(false);
 
   const isProcessing =
     status === "receiving" || status === "reading" || status === "drafting";
+  const hasUploadFiles = images.some((image) => Boolean(image.file));
+  const showUploadProgress = hasUploadFiles && isProcessing;
+  const canGenerate = status === "ready" || hasUploadFiles;
 
   const reviewCount = draft?.reviewFields.length ?? 0;
   const hasDraft =
     status === "draft" || status === "reviewed" || status === "submitted";
-  const editable = hasDraft;
+  const hasDocument = Boolean(draft) && (hasDraft || status === "ready");
+  const showFormalReport =
+    !!draft &&
+    isReportDraft(draft) &&
+    (status === "reviewed" || status === "submitted");
+  const editable = status === "draft" || status === "ready";
   const compactDoc = isMobile;
 
   const metrics = useMemo(() => {
@@ -70,7 +84,9 @@ export default function Home() {
           ? "提出済"
           : status === "reviewed"
             ? "確認済"
-            : "下書き"
+            : status === "ready"
+              ? "受信完了"
+              : "下書き"
     };
   }, [draft, images.length, mode, status]);
 
@@ -86,10 +102,22 @@ export default function Home() {
 
   useEffect(() => {
     if (!isMobile) return;
-    if (hasDraft || isProcessing) {
+    if (hasDocument || isProcessing) {
       setMobileStep("result");
     }
-  }, [hasDraft, isProcessing, isMobile]);
+  }, [hasDocument, isProcessing, isMobile]);
+
+  useEffect(() => {
+    if (photoFlowStartedRef.current) return;
+    if (typeof window === "undefined") return;
+    const from = new URLSearchParams(window.location.search).get("from");
+    if (from !== "photo") return;
+    photoFlowStartedRef.current = true;
+    window.history.replaceState({}, "", "/report");
+    preparePhotoFlow();
+    // 初回マウント時のみ①からの導線を着地させる
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isMobile && mobileStep === "result") {
@@ -157,13 +185,101 @@ export default function Home() {
     };
   }
 
+  function buildSampleSlots(
+    sampleId: string,
+    imagePaths: string[],
+    imageNames?: string[]
+  ): ImageSlot[] {
+    return imagePaths.map((path, index) => ({
+      id: `sample-${sampleId}-${index}`,
+      name: imageNames?.[index] || path.split("/").pop() || `sample-${index + 1}.svg`,
+      previewUrl: path,
+      fromSample: true
+    }));
+  }
+
+  /** ①→②: 写真入りの空テンプレで着地（受信完了） */
+  function preparePhotoFlow() {
+    const sample = SAMPLE_SETS.find((item) => item.id === PHOTO_FLOW_SAMPLE_ID);
+    if (!sample || !isReportDraft(sample.draft)) return;
+
+    clearTimers();
+    setError("");
+    setChatVisible(false);
+    setMode("report");
+    setResultTab("document");
+    setElapsedLabel("約20秒");
+    if (isMobile) setMobileStep("result");
+
+    const slots = buildSampleSlots(
+      sample.id,
+      sample.imagePaths,
+      sample.imageNames
+    );
+    revokeNonSample(slots);
+    setPhotosOpen(true);
+
+    const shell = createReportShell(
+      sample.draft.title,
+      slots.map((slot) => ({
+        name: slot.name,
+        previewUrl: slot.previewUrl
+      }))
+    );
+    setDraft(shell);
+    setRevealCount(REPORT_REVEAL_TOTAL);
+    setStatus("ready");
+  }
+
+  /** 受信完了テンプレに、サンプル下書き本文を書き込む */
+  function fillPhotoFlowDraft() {
+    const sample = SAMPLE_SETS.find((item) => item.id === PHOTO_FLOW_SAMPLE_ID);
+    if (!sample || !isReportDraft(sample.draft)) return;
+    if (!images.length) {
+      setError("反映する写真がありません。");
+      setStatus("error");
+      return;
+    }
+
+    clearTimers();
+    setError("");
+    setResultTab("document");
+    setElapsedLabel("約8秒");
+    if (isMobile) setMobileStep("result");
+
+    const nextDraft = attachSourceImages(
+      structuredClone(sample.draft),
+      images
+    );
+    setDraft(nextDraft);
+    setRevealCount(0);
+    setStatus("drafting");
+    animateReveal(REPORT_REVEAL_TOTAL, () => {
+      setStatus("draft");
+    });
+  }
+
+  function handleGenerate() {
+    if (status === "ready") {
+      fillPhotoFlowDraft();
+      return;
+    }
+    void generateFromUpload();
+  }
+
   async function playSample(sampleId: string) {
+    if (sampleId === PHOTO_FLOW_SAMPLE_ID) {
+      preparePhotoFlow();
+      return;
+    }
+
     const sample = SAMPLE_SETS.find((item) => item.id === sampleId);
     if (!sample) return;
 
     clearTimers();
     setError("");
     setDraft(null);
+    setMode(sample.mode);
     setResultTab("document");
     setChatSender(sample.senderName);
     setChatCount(sample.imagePaths.length);
@@ -172,12 +288,11 @@ export default function Home() {
     setElapsedLabel("約20秒");
     if (isMobile) setMobileStep("result");
 
-    const slots: ImageSlot[] = sample.imagePaths.map((path, index) => ({
-      id: `sample-${sample.id}-${index}`,
-      name: path.split("/").pop() || `sample-${index + 1}.svg`,
-      previewUrl: path,
-      fromSample: true
-    }));
+    const slots = buildSampleSlots(
+      sample.id,
+      sample.imagePaths,
+      sample.imageNames
+    );
 
     schedule(() => {
       revokeNonSample(slots);
@@ -338,6 +453,11 @@ export default function Home() {
         テンプレート下書きが自動作成されます。
       </span>
     </div>
+  ) : showFormalReport ? (
+    <ReportPrintView
+      draft={draft as ReportDraft}
+      statusLabel={status === "submitted" ? "提出済" : "確認済"}
+    />
   ) : isReportDraft(draft) ? (
     <ReportTemplateView
       draft={draft as ReportDraft}
@@ -351,7 +471,11 @@ export default function Home() {
   ) : (
     <ToolboxTemplateView
       draft={draft as ToolboxBriefing}
-      revealCount={editable ? TOOLBOX_REVEAL_TOTAL : revealCount}
+      revealCount={
+        status === "draft" || status === "reviewed" || status === "submitted"
+          ? TOOLBOX_REVEAL_TOTAL
+          : revealCount
+      }
       editable={editable}
       compact={compactDoc}
       onMetaChange={updateToolboxMeta}
@@ -383,8 +507,8 @@ export default function Home() {
             <button
               type="button"
               className={mobileStep === "result" ? "active" : ""}
-              onClick={() => draft && setMobileStep("result")}
-              disabled={!draft && !isProcessing}
+              onClick={() => hasDocument && setMobileStep("result")}
+              disabled={!hasDocument && !isProcessing}
             >
               2 成果物
             </button>
@@ -544,25 +668,25 @@ export default function Home() {
                 />
 
                 <ProcessStepper
-                  status={
-                    isMobile && mobileStep === "upload" ? status : status
-                  }
+                  status={status}
                   error={error}
-                  showBeforeAfter={!isMobile}
+                  showBeforeAfter={!isMobile && hasDraft}
                   elapsedLabel={elapsedLabel}
+                  showProgress={showUploadProgress}
                 />
 
                 {!isMobile && (
                   <WorkflowActions
                     status={status}
                     reviewCount={reviewCount}
-                    canGenerate={images.some((image) => image.file)}
+                    canGenerate={canGenerate}
                     isProcessing={isProcessing}
-                    onGenerate={generateFromUpload}
+                    onGenerate={handleGenerate}
                     onReview={() => setStatus("reviewed")}
                     onSubmit={() => setStatus("submitted")}
                     onPrint={handlePrint}
                     onReset={() => resetAll()}
+                    onBackToDraft={() => setStatus("draft")}
                   />
                 )}
 
@@ -571,14 +695,20 @@ export default function Home() {
                     <button
                       type="button"
                       className="primaryButton mobileFullBtn"
-                      disabled={
-                        !images.some((image) => image.file) || isProcessing
-                      }
-                      onClick={generateFromUpload}
+                      disabled={!canGenerate || isProcessing}
+                      onClick={handleGenerate}
                     >
-                      {isProcessing ? "作成中…" : "AIで下書き作成"}
+                      {isProcessing
+                        ? "作成中…"
+                        : status === "ready"
+                          ? "AIで下書き"
+                          : "AIで下書き作成"}
                     </button>
-                    {images.some((image) => image.file) ? (
+                    {status === "ready" ? (
+                      <p className="mobileHint">
+                        写真は反映済み。AIで日付・現場名などを記入します
+                      </p>
+                    ) : hasUploadFiles ? (
                       <p className="mobileHint">
                         写真を選んだら上のボタンをタップ
                       </p>
@@ -600,7 +730,13 @@ export default function Home() {
                           ? "現場状況報告書"
                           : "本日の朝礼メモ"}
                       </h2>
-                      <p>テンプレート下書きを編集できます</p>
+                      <p>
+                        {status === "ready"
+                          ? "写真反映済み。「AIで下書き」で日付・現場名などを記入します"
+                          : showFormalReport
+                            ? "送付用の正式帳票です。PDF保存してクライアントへ共有できます"
+                            : "テンプレート下書きを編集できます"}
+                      </p>
                     </div>
                     {draft && (
                       <span className="successBadge">
@@ -608,7 +744,9 @@ export default function Home() {
                           ? "提出済"
                           : status === "reviewed"
                             ? "確認済"
-                            : "下書き"}
+                            : status === "ready"
+                              ? "受信完了"
+                              : "下書き"}
                       </span>
                     )}
                   </div>
@@ -660,9 +798,11 @@ export default function Home() {
                     ? "提出済"
                     : status === "reviewed"
                       ? "確認済"
-                      : isProcessing
-                        ? "作成中…"
-                        : "下書き"}
+                      : status === "ready"
+                        ? "受信完了"
+                        : isProcessing
+                          ? "作成中…"
+                          : "下書き"}
                 </h2>
               </div>
               {metrics && (
@@ -679,6 +819,7 @@ export default function Home() {
               error={error}
               showBeforeAfter={hasDraft}
               elapsedLabel={elapsedLabel}
+              showProgress={showUploadProgress}
             />
 
             {images.length > 0 && (
@@ -749,17 +890,20 @@ export default function Home() {
 
         {isMobile && mobileStep === "result" && (
           <WorkflowActions
-            status={hasDraft || isProcessing ? status : "idle"}
+            status={
+              hasDraft || isProcessing || status === "ready" ? status : "idle"
+            }
             reviewCount={reviewCount}
-            canGenerate={images.some((image) => image.file)}
+            canGenerate={canGenerate}
             isProcessing={isProcessing}
             sticky
-            onGenerate={generateFromUpload}
+            onGenerate={handleGenerate}
             onReview={() => setStatus("reviewed")}
             onSubmit={() => setStatus("submitted")}
             onPrint={handlePrint}
             onReset={() => resetAll({ keepStep: "upload" })}
             onBack={() => setMobileStep("upload")}
+            onBackToDraft={() => setStatus("draft")}
           />
         )}
 

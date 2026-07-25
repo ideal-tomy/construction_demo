@@ -16,6 +16,7 @@ type Props = {
   onPrint: () => void;
   onReset: () => void;
   onBack?: () => void;
+  onBackToDraft?: () => void;
 };
 
 export function WorkflowActions({
@@ -29,7 +30,8 @@ export function WorkflowActions({
   onSubmit,
   onPrint,
   onReset,
-  onBack
+  onBack,
+  onBackToDraft
 }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -58,7 +60,10 @@ export function WorkflowActions({
     else onGenerate();
   }
 
-  const primaryDisabled = !hasDraft && (!canGenerate || isProcessing);
+  // ready（①からの受信完了）または実アップロード時は AIで下書き を押せる
+  const primaryDisabled = hasDraft
+    ? false
+    : !canGenerate || isProcessing;
 
   if (sticky) {
     return (
@@ -120,6 +125,19 @@ export function WorkflowActions({
                     戻る
                   </button>
                 )}
+                {onBackToDraft &&
+                  (status === "reviewed" || status === "submitted") && (
+                    <button
+                      type="button"
+                      className="ghostButton"
+                      onClick={() => {
+                        setSheetOpen(false);
+                        onBackToDraft();
+                      }}
+                    >
+                      下書きに戻る
+                    </button>
+                  )}
                 <button
                   type="button"
                   className="ghostButton"
@@ -210,6 +228,13 @@ export function WorkflowActions({
             PDFとして保存
           </button>
         )}
+
+        {onBackToDraft &&
+          (status === "reviewed" || status === "submitted") && (
+            <button type="button" className="textButton" onClick={onBackToDraft}>
+              下書きに戻る
+            </button>
+          )}
 
         <button type="button" className="textButton" onClick={onReset}>
           リセット
