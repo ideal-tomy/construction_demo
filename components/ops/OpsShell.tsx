@@ -48,12 +48,11 @@ export function OpsShell({ children, toast }: Props) {
             </Link>
             <div>
               <p className="opsEyebrow">③ 現場オペ</p>
-              <h1>管理ダッシュボード</h1>
+              <h1>現場オペ</h1>
             </div>
           </div>
           <div className="opsTopbarRight">
-            <span className="opsModePill">内勤モード</span>
-            <span className="opsSitePill">現場A 住宅新築工事</span>
+            <span className="opsModePill">内勤 · 現場A</span>
           </div>
         </header>
 

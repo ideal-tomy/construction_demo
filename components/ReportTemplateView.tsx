@@ -47,14 +47,15 @@ export function ReportTemplateView({
     draft.reviewFields.find((field) => field.path === path)?.reason;
 
   const defaultOpen = useMemo(() => {
-    const open = new Set<string>(["workSummary", "safety"]);
+    // スマホは縦を抑えるため、要確認がある欄だけ開く（PCは作業・安全を初期表示）
+    const open = new Set<string>(compact ? [] : ["workSummary", "safety"]);
     draft.reviewFields.forEach((field) => {
       if (field.path.startsWith("sections.")) {
         open.add(field.path.replace("sections.", ""));
       }
     });
     return open;
-  }, [draft.reviewFields]);
+  }, [compact, draft.reviewFields]);
 
   const [openSections, setOpenSections] = useState<Set<string>>(defaultOpen);
 
@@ -131,7 +132,7 @@ export function ReportTemplateView({
               {editable ? (
                 <input
                   value={value}
-                  placeholder="（未記入）"
+                  placeholder="未記入"
                   onChange={(event) => {
                     onHeaderChange(field.key, event.target.value);
                     if (review) onClearReview(path);
@@ -139,7 +140,7 @@ export function ReportTemplateView({
                 />
               ) : (
                 <strong>
-                  {revealed ? value || "（未記入）" : "…"}
+                  {revealed ? value || "未記入" : "…"}
                 </strong>
               )}
               {review && revealed && <small>{reviewReason(path)}</small>}
@@ -184,8 +185,8 @@ export function ReportTemplateView({
                 <p className="docCollapsedPreview no-print">
                   {revealed
                     ? preview
-                      ? `${preview}${preview.length >= 42 ? "…" : ""}`
-                      : "（未記入）"
+                      ? `${preview}${preview.length >= 36 ? "…" : ""}`
+                      : "未記入"
                     : "記入中…"}
                 </p>
               )}
@@ -205,14 +206,14 @@ export function ReportTemplateView({
                   <textarea
                     rows={compact ? 2 : 3}
                     value={value}
-                    placeholder="（未記入）"
+                    placeholder="未記入"
                     onChange={(event) => {
                       onSectionChange(field.key, event.target.value);
                       if (review) onClearReview(path);
                     }}
                   />
                 ) : (
-                  <p>{revealed ? value || "（未記入）" : "記入中…"}</p>
+                  <p>{revealed ? value || "未記入" : "記入中…"}</p>
                 )}
                 {review && revealed && <small>{reviewReason(path)}</small>}
               </label>

@@ -28,23 +28,23 @@ export function OpsDashboard({
     <div className="opsDash">
       {arrival ? (
         <div className="opsArrival" role="status">
-          提出した日報が管理画面に届きました
+          日報が届きました
         </div>
       ) : null}
 
       <section className="opsKpiRow" aria-label="概要">
         <article className="opsKpi">
-          <p>未確認通知</p>
+          <p>未確認</p>
           <strong>{unread}</strong>
           <span>件</span>
         </article>
         <article className="opsKpi opsKpiAccent">
-          <p>本日の写真</p>
+          <p>写真</p>
           <strong>{photoCount || 4}</strong>
           <span>枚</span>
         </article>
         <article className="opsKpi opsKpiWarn">
-          <p>不足アラート</p>
+          <p>不足</p>
           <strong>{missingOpen}</strong>
           <span>件</span>
         </article>
@@ -54,7 +54,7 @@ export function OpsDashboard({
         <section className="opsCard">
           <div className="opsCardHead">
             <h2>通知</h2>
-            <span>写真・日報</span>
+            <span>日報</span>
           </div>
           <ul className="opsFeed">
             {notifications.map((item) => (
@@ -71,13 +71,14 @@ export function OpsDashboard({
                   </span>
                   <span className="opsFeedBody">
                     <strong>{item.title}</strong>
-                    <span>{item.summary}</span>
                     <em>
-                      {item.sender} · {item.relativeTime}
-                      {item.status === "reviewed" ? " · 確認済み" : ""}
+                      {item.summary} · {item.relativeTime}
+                      {item.status === "reviewed" ? " · 確認済" : ""}
                     </em>
                   </span>
-                  <span className="opsFeedAction">開く</span>
+                  <span className="opsFeedAction" aria-hidden>
+                    →
+                  </span>
                 </button>
               </li>
             ))}
@@ -86,26 +87,23 @@ export function OpsDashboard({
 
         <section className="opsCard">
           <div className="opsCardHead">
-            <h2>不足している現場写真</h2>
-            <span>催促できます</span>
+            <h2>不足写真</h2>
+            <span>催促</span>
           </div>
           <ul className="opsMissingList">
             {missing.map((item) => (
               <li key={item.id} className="opsMissingItem">
-                <div>
+                <div className="opsMissingMain">
                   <strong>{item.label}</strong>
                   <p>{item.reason}</p>
-                  <em>
-                    {item.siteName} · 担当 {item.assignee}
-                  </em>
                 </div>
                 <button
                   type="button"
-                  className="opsPrimaryBtn"
+                  className="opsPrimaryBtn opsNudgeBtn"
                   disabled={item.nudged}
                   onClick={() => onOpenNudge(item.id)}
                 >
-                  {item.nudged ? "催促済み" : "催促する"}
+                  {item.nudged ? "済" : "催促"}
                 </button>
               </li>
             ))}

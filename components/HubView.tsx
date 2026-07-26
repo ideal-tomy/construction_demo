@@ -41,15 +41,13 @@ function DemoCard({ demo }: { demo: HubDemo }) {
 
 export function HubView() {
   const roiHref = getRoiSimulatorUrl();
-  const { title, englishLabel, wedge, proof, comboLine } = hubCopy;
+  const { title, englishLabel, comboLine } = hubCopy;
 
   return (
     <div className="hubRoot">
       <div className="hubInner">
         <p className="hubEyebrow">{englishLabel}</p>
         <h1 className="hubTitle">{title}</h1>
-        <p className="hubWedge">{wedge}</p>
-        <p className="hubProof">{proof}</p>
 
         <div className="hubCombo">
           <p className="hubComboLabel">つながると</p>

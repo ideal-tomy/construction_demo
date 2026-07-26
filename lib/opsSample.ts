@@ -74,8 +74,8 @@ export function buildDefaultOpsNotification(
   return {
     id: "n-report-a",
     kind: "daily_report",
-    title: "現場太郎から日報が届きました",
-    summary: `${draft.header.projectName} / ${draft.header.siteName}`,
+    title: "日報が届きました",
+    summary: `現場A / ${draft.header.siteName}`,
     sender: draft.header.reporter,
     relativeTime: "30分前",
     status: "unread",
@@ -98,8 +98,8 @@ export function buildOpsNotificationFromHandoff(
   return {
     id: "n-report-handoff",
     kind: "daily_report",
-    title: `${handoff.header.reporter || "現場"}から日報が届きました`,
-    summary: `${handoff.header.projectName} / ${handoff.header.siteName}`,
+    title: "日報が届きました",
+    summary: `現場A / ${handoff.header.siteName || "基礎工区"}`,
     sender: handoff.header.reporter,
     relativeTime: "たった今",
     status: "unread",
@@ -114,21 +114,21 @@ export function buildOpsNotificationFromHandoff(
 export const defaultMissingPhotos: OpsMissingPhoto[] = [
   {
     id: "m-rebar-closeup",
-    label: "配筋検査の接写",
-    reason: "検査前の配筋は全体写真のみ。継手部の接写が未提出です。",
+    label: "配筋の接写",
+    reason: "継手部の接写が未提出",
     siteName: "現場A 基礎工区",
     assignee: "現場太郎",
     nudgePreview:
-      "【催促】配筋検査前の継手部接写写真を追加で送ってください。全体写真は受領済みです。"
+      "【催促】配筋検査前の継手部接写を追加で送ってください。"
   },
   {
     id: "m-safety-sign",
-    label: "安全看板の設置状況",
-    reason: "朝礼写真はありますが、現場入口の安全看板が確認できません。",
+    label: "安全看板",
+    reason: "入口の安全看板が未提出",
     siteName: "現場A 基礎工区",
     assignee: "現場太郎",
     nudgePreview:
-      "【催促】現場入口の安全看板（設置状況）の写真を1枚追加でお願いします。"
+      "【催促】現場入口の安全看板写真を1枚追加でお願いします。"
   }
 ];
 

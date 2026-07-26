@@ -20,12 +20,7 @@ export type HubDemo = {
 export const hubCopy = {
   title: "建設の記録デモ",
   englishLabel: "Construction",
-  wedge:
-    "現場で撮る・見る と、事務所に戻ってからの整理・転記・報告・管理のあいだ。",
-  proof:
-    "現場の記録が、退勤後の山積み作業ではなく、その場〜短時間で仕事の材料・報告・管理に載る。",
-  comboLine:
-    "撮る → 整える → 報告・管理に載せる。つながると「写真と記録が現場の延長で仕事になる」。",
+  comboLine: "撮る → 整える → 報告・管理へ。写真が、その場で仕事になる。",
 } as const;
 
 export const hubDemos: HubDemo[] = [
