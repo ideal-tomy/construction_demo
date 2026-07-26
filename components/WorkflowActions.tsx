@@ -17,6 +17,7 @@ type Props = {
   onReset: () => void;
   onBack?: () => void;
   onBackToDraft?: () => void;
+  onGoOps?: () => void;
 };
 
 export function WorkflowActions({
@@ -31,7 +32,8 @@ export function WorkflowActions({
   onPrint,
   onReset,
   onBack,
-  onBackToDraft
+  onBackToDraft,
+  onGoOps
 }: Props) {
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -169,6 +171,18 @@ export function WorkflowActions({
                   <p className="submitMessage sheetSubmitMsg">
                     提出完了。転記なしで、このまま共有できます。
                   </p>
+                  {onGoOps ? (
+                    <button
+                      type="button"
+                      className="primaryButton"
+                      onClick={() => {
+                        setSheetOpen(false);
+                        onGoOps();
+                      }}
+                    >
+                      管理画面で確認 →
+                    </button>
+                  ) : null}
                   <RoiPaybackCta />
                 </>
               )}
@@ -253,6 +267,16 @@ export function WorkflowActions({
           <p className="submitMessage">
             提出完了。内勤が写真から手作業で転記する必要はありません。要確認欄だけ直せば、このまま共有できます。
           </p>
+          {onGoOps ? (
+            <button
+              type="button"
+              className="primaryButton"
+              onClick={onGoOps}
+              style={{ marginTop: 12 }}
+            >
+              ③ 管理画面で確認 →
+            </button>
+          ) : null}
           <RoiPaybackCta />
         </>
       )}

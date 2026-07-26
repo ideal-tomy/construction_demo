@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChatArrivalToast } from "@/components/ChatArrivalToast";
 import { DetailDataPanel } from "@/components/DetailDataPanel";
 import { ModeSelector } from "@/components/ModeSelector";
@@ -14,6 +15,10 @@ import { SampleLauncher } from "@/components/SampleLauncher";
 import { ToolboxTemplateView } from "@/components/ToolboxTemplateView";
 import { WorkflowActions } from "@/components/WorkflowActions";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import {
+  createOpsHandoffFromDraft,
+  saveOpsHandoff
+} from "@/lib/opsSample";
 import {
   PHOTO_FLOW_SAMPLE_ID,
   SAMPLE_SETS,
@@ -38,6 +43,7 @@ const REPORT_REVEAL_TOTAL = 12;
 const TOOLBOX_REVEAL_TOTAL = 8;
 
 export default function Home() {
+  const router = useRouter();
   const isMobile = useIsMobile();
   const [mobileStep, setMobileStep] = useState<MobileStep>("intro");
   const [photosOpen, setPhotosOpen] = useState(false);
@@ -446,6 +452,31 @@ export default function Home() {
     window.setTimeout(() => window.print(), 40);
   }
 
+  function handleSubmit() {
+    if (draft && isReportDraft(draft)) {
+      const sourceImages =
+        draft.sourceImages.length > 0
+          ? draft.sourceImages
+          : images.map((slot) => ({
+              name: slot.name,
+              previewUrl: slot.previewUrl
+            }));
+      saveOpsHandoff(
+        createOpsHandoffFromDraft({
+          title: draft.title,
+          header: draft.header,
+          sections: draft.sections,
+          images: sourceImages
+        })
+      );
+    }
+    setStatus("submitted");
+  }
+
+  function goToOps() {
+    router.push("/ops?from=report");
+  }
+
   const showIntro = !isMobile || mobileStep === "intro";
   const showUpload = !isMobile || mobileStep === "upload";
   const showResult = !isMobile || mobileStep === "result";
@@ -694,10 +725,11 @@ export default function Home() {
                     isProcessing={isProcessing}
                     onGenerate={handleGenerate}
                     onReview={() => setStatus("reviewed")}
-                    onSubmit={() => setStatus("submitted")}
+                    onSubmit={handleSubmit}
                     onPrint={handlePrint}
                     onReset={() => resetAll()}
                     onBackToDraft={() => setStatus("draft")}
+                    onGoOps={goToOps}
                   />
                 )}
 
@@ -895,6 +927,13 @@ export default function Home() {
                 <p className="submitMessage mobileSubmitMsg">
                   提出完了。転記なしで、このまま共有できます。
                 </p>
+                <button
+                  type="button"
+                  className="primaryButton mobileFullBtn"
+                  onClick={goToOps}
+                >
+                  ③ 管理画面で確認 →
+                </button>
                 <RoiPaybackCta />
               </div>
             )}
@@ -914,11 +953,12 @@ export default function Home() {
             sticky
             onGenerate={handleGenerate}
             onReview={() => setStatus("reviewed")}
-            onSubmit={() => setStatus("submitted")}
+            onSubmit={handleSubmit}
             onPrint={handlePrint}
             onReset={() => resetAll({ keepStep: "upload" })}
             onBack={() => setMobileStep("upload")}
             onBackToDraft={() => setStatus("draft")}
+            onGoOps={goToOps}
           />
         )}
 

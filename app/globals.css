@@ -2480,3 +2480,640 @@ footer {
   color: #ffb347;
   text-decoration: none;
 }
+
+/* ===== Ops dashboard (③) — light SaaS ===== */
+.opsRoot {
+  --ops-bg: #f5f6f8;
+  --ops-panel: #ffffff;
+  --ops-text: #0f172a;
+  --ops-muted: #64748b;
+  --ops-border: #e2e8f0;
+  --ops-accent: #ff6a00;
+  --ops-accent-soft: #fff4eb;
+  --ops-warn: #b45309;
+  --ops-warn-soft: #fff7ed;
+  --ops-ok: #047857;
+  --ops-ok-soft: #ecfdf5;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  background: var(--ops-bg);
+  color: var(--ops-text);
+  font-family:
+    "Noto Sans JP",
+    "Segoe UI",
+    "Hiragino Sans",
+    sans-serif;
+}
+
+.opsSidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem 1rem;
+  border-right: 1px solid var(--ops-border);
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.opsBrand {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.opsBrandMark {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.55rem;
+  background: var(--ops-accent);
+  color: #fff;
+  font-weight: 900;
+}
+
+.opsBrand strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.opsBrand p {
+  margin: 0.15rem 0 0;
+  color: #94a3b8;
+  font-size: 0.72rem;
+}
+
+.opsNav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.opsNavItem {
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.55rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.opsNavItem.isActive {
+  background: rgba(255, 106, 0, 0.18);
+  color: #ffb347;
+}
+
+.opsNavItem.isMuted {
+  color: #64748b;
+  cursor: default;
+}
+
+.opsSidebarNote {
+  margin-top: auto;
+  color: #64748b;
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.opsMain {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.opsTopbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.85rem;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--ops-border);
+  background: var(--ops-panel);
+}
+
+.opsTopbarLeft {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.opsBack {
+  color: var(--ops-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  margin-top: 0.35rem;
+}
+
+.opsEyebrow {
+  margin: 0;
+  color: var(--ops-accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.opsTopbar h1,
+.opsSheetHead h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.opsTopbarRight {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.opsModePill,
+.opsSitePill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.opsModePill {
+  color: var(--ops-accent);
+  background: var(--ops-accent-soft);
+}
+
+.opsSitePill {
+  color: var(--ops-text);
+  background: #eef2f7;
+}
+
+.opsContent {
+  flex: 1;
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+.opsFooter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--ops-border);
+  color: var(--ops-muted);
+  font-size: 0.72rem;
+  background: var(--ops-panel);
+}
+
+.opsExternal {
+  color: var(--ops-accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.opsArrival {
+  margin-bottom: 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #fdba74;
+  border-radius: 0.75rem;
+  background: linear-gradient(90deg, #fff7ed, #fff);
+  color: #9a3412;
+  font-size: 0.88rem;
+  font-weight: 800;
+  animation: opsPulse 1.2s ease;
+}
+
+@keyframes opsPulse {
+  from { transform: translateY(-4px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+.opsKpiRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.95rem;
+}
+
+.opsKpi {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.5rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--ops-border);
+  border-radius: 0.9rem;
+  background: var(--ops-panel);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.opsKpi p {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--ops-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.opsKpi strong {
+  font-size: 1.65rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.opsKpi span {
+  align-self: end;
+  color: var(--ops-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.opsKpiAccent strong { color: var(--ops-accent); }
+.opsKpiWarn strong { color: var(--ops-warn); }
+
+.opsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 0.85rem;
+}
+
+.opsCard {
+  border: 1px solid var(--ops-border);
+  border-radius: 0.95rem;
+  background: var(--ops-panel);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+}
+
+.opsCardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--ops-border);
+}
+
+.opsCardHead h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.opsCardHead span {
+  color: var(--ops-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.opsFeed,
+.opsMissingList {
+  list-style: none;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.opsFeedItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.8rem 0.75rem;
+  border: 0;
+  border-radius: 0.7rem;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.opsFeedItem:hover {
+  background: #f8fafc;
+}
+
+.opsFeedItem.isHighlight {
+  background: var(--ops-accent-soft);
+}
+
+.opsFeedItem.isReviewed {
+  opacity: 0.72;
+}
+
+.opsFeedIcon {
+  margin-top: 0.15rem;
+  color: var(--ops-accent);
+  font-size: 0.7rem;
+}
+
+.opsFeedBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.opsFeedBody strong {
+  font-size: 0.88rem;
+}
+
+.opsFeedBody span,
+.opsFeedBody em {
+  color: var(--ops-muted);
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+.opsFeedAction {
+  align-self: center;
+  color: var(--ops-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.opsMissingItem {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid var(--ops-border);
+}
+
+.opsMissingItem:last-child {
+  border-bottom: 0;
+}
+
+.opsMissingItem strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.opsMissingItem p {
+  margin: 0.3rem 0;
+  color: var(--ops-text);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.opsMissingItem em {
+  color: var(--ops-muted);
+  font-size: 0.72rem;
+  font-style: normal;
+}
+
+.opsPrimaryBtn,
+.opsGhostBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  padding: 0 0.95rem;
+  border-radius: 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.opsPrimaryBtn {
+  border: 0;
+  background: var(--ops-accent);
+  color: #fff;
+}
+
+.opsPrimaryBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.opsGhostBtn {
+  border: 1px solid var(--ops-border);
+  background: #fff;
+  color: var(--ops-text);
+}
+
+.opsSheetRoot {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: stretch end;
+}
+
+.opsSheetBackdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.42);
+  cursor: pointer;
+}
+
+.opsSheet {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 34rem);
+  max-height: 100dvh;
+  overflow: auto;
+  background: #fff;
+  box-shadow: -12px 0 40px rgba(15, 23, 42, 0.18);
+  animation: opsSheetIn 0.22s ease;
+}
+
+.opsSheetNarrow {
+  width: min(100%, 26rem);
+}
+
+@keyframes opsSheetIn {
+  from { transform: translateX(12px); opacity: 0.4; }
+  to { transform: none; opacity: 1; }
+}
+
+.opsSheetHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--ops-border);
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+}
+
+.opsSheetMeta {
+  margin: 0.25rem 0 0;
+  color: var(--ops-muted);
+  font-size: 0.78rem;
+}
+
+.opsDetailPhotos {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.45rem;
+  padding: 0.85rem 1.1rem 0;
+}
+
+.opsDetailPhotos figure {
+  margin: 0;
+}
+
+.opsDetailPhotos img {
+  display: block;
+  width: 100%;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 0.45rem;
+  background: #e2e8f0;
+}
+
+.opsDetailPhotos figcaption {
+  margin-top: 0.2rem;
+  text-align: center;
+  color: var(--ops-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.opsDetailForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  padding: 0.9rem 1.1rem;
+}
+
+.opsDetailForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.opsDetailForm label span {
+  color: var(--ops-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.opsDetailForm input,
+.opsDetailForm textarea {
+  width: 100%;
+  border: 1px solid var(--ops-border);
+  border-radius: 0.55rem;
+  padding: 0.55rem 0.65rem;
+  background: #f8fafc;
+}
+
+.opsDetailFull {
+  grid-column: 1 / -1;
+}
+
+.opsSheetFoot {
+  padding: 0.85rem 1.1rem 1.15rem;
+  border-top: 1px solid var(--ops-border);
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+}
+
+.opsSheetFootRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.opsConfirmedNote {
+  margin: 0;
+  color: var(--ops-ok);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.opsNudgeBody {
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.opsNudgeBody p {
+  margin: 0;
+}
+
+.opsNudgeBody strong {
+  display: block;
+  margin-bottom: 0.2rem;
+  color: var(--ops-muted);
+  font-size: 0.72rem;
+}
+
+.opsNudgeBody blockquote {
+  margin: 0;
+  padding: 0.75rem 0.85rem;
+  border-left: 3px solid var(--ops-accent);
+  border-radius: 0 0.55rem 0.55rem 0;
+  background: var(--ops-accent-soft);
+  font-size: 0.85rem;
+}
+
+.opsToast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  z-index: 50;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.1rem;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.28);
+}
+
+@media (max-width: 900px) {
+  .opsRoot {
+    grid-template-columns: 1fr;
+  }
+
+  .opsSidebar {
+    display: none;
+  }
+
+  .opsKpiRow,
+  .opsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .opsSheetRoot {
+    place-items: end stretch;
+  }
+
+  .opsSheet,
+  .opsSheetNarrow {
+    width: 100%;
+    max-height: 92dvh;
+    border-radius: 1rem 1rem 0 0;
+    animation: opsSheetUp 0.22s ease;
+  }
+
+  @keyframes opsSheetUp {
+    from { transform: translateY(16px); opacity: 0.5; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .opsDetailPhotos {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .opsDetailPhotos img {
+    height: 52px;
+  }
+
+  .opsDetailForm {
+    grid-template-columns: 1fr;
+  }
+
+  .opsTopbar h1 {
+    font-size: 1.1rem;
+  }
+}

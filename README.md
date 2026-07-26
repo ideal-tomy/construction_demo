@@ -7,7 +7,9 @@ ideal TOP「建設」から飛ぶ **外部ハブ**（製造の `product_flow` `/
 | `/` | ハブ（①②③の入口） |
 | `/photo` | ① 写真の仕事化（分類・命名） |
 | `/report` | ② 報告書・朝礼下書き |
-| （外部） | ③ [kanri 現場オペ](https://kanri-kensetsu.vercel.app/login) |
+| `/ops` | ③ 管理ダッシュボード（通知・確認・催促） |
+
+補助: [GENBA 本格アプリ](https://kanri-kensetsu.vercel.app/login)（③画面内リンク）
 
 リポジトリ: https://github.com/ideal-tomy/construction_demo  
 本番: https://construction-demo-two.vercel.app
@@ -31,6 +33,12 @@ NEXT_PUBLIC_ROI_SIMULATOR_URL=https://roi-simulator-eta.vercel.app
 ```bash
 npm run dev
 ```
+
+## 体験の流れ
+
+1. `/photo` で散在写真を整理
+2. `/report` で日報下書き → 確認 → 提出
+3. `/ops` で提出通知の確認・編集、不足写真の催促
 
 ## 関連
 
