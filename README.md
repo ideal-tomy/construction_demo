@@ -40,6 +40,14 @@ npm run dev
 2. `/report` で日報下書き → 確認 → 提出
 3. `/ops` で提出通知の確認・編集、不足写真の催促
 
+## 静的アセット（写真デモ）
+
+`/photo` のサンプル画像は `public/images/` 配下（`foundation.png` など）。
+
+- **パス・ファイル名は ASCII のみ**（日本語ファイル名は Git / URL エンコード / Vercel 配信で欠落や 404 の原因になりやすい）
+- 参照元: `lib/photoSample.ts` の `photoAssets`
+- 画像を差し替えるときはファイル名を変えず同名で置き換えるか、`photoAssets` とセットで更新する
+
 ## 関連
 
 - ideal PLAN: `sites/ideal_official/docs/industry-demos/construction.md`

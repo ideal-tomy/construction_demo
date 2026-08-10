@@ -23,11 +23,12 @@ export const processingSteps = [
   "整理が完了しました",
 ] as const;
 
+/** Static assets under public/images — keep ASCII-only paths for Git/Vercel/CDN safety. */
 const photoAssets = {
-  foundation: "/images/散在写真_基礎工事.png",
-  rebar: "/images/散在写真_鉄筋配筋.png",
-  formwork: "/images/散在写真_型枠設置.png",
-  safety: "/images/散在写真_安全確認.png",
+  foundation: "/images/foundation.png",
+  rebar: "/images/rebar.png",
+  formwork: "/images/formwork.png",
+  safety: "/images/safety.png",
 } as const;
 
 export const constructionPhotoSample = {
