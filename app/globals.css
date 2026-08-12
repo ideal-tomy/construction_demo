@@ -2172,8 +2172,8 @@ footer {
 /* ===== Construction hub / photo (distinct from report blues) ===== */
 .hubRoot {
   min-height: 100dvh;
-  background: #1a1a1a;
-  color: #fff8e7;
+  background: #ffffff;
+  color: #1a1a1a;
 }
 .hubInner {
   width: min(100% - 1.5rem, 40rem);
@@ -2189,21 +2189,21 @@ footer {
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #ffb347;
+  color: #c45c00;
 }
 .hubTitle {
   margin: 0.35rem 0 0;
   font-size: clamp(1.6rem, 6.5vw, 2.5rem);
   font-weight: 900;
   line-height: 1.15;
-  color: #fff;
+  color: #1a1a1a;
 }
 .hubCombo {
   margin-top: 0.85rem;
   padding: 0.75rem 0.95rem;
   border: 2px solid #ff6b00;
   border-radius: 0.9rem;
-  background: #2a2a2a;
+  background: #fff8e7;
 }
 .hubComboLabel {
   margin: 0;
@@ -2211,14 +2211,14 @@ footer {
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ff6b00;
+  color: #c45c00;
 }
 .hubComboText {
   margin: 0.35rem 0 0;
   font-size: 0.92rem;
   font-weight: 700;
   line-height: 1.4;
-  color: #fff;
+  color: #1a1a1a;
 }
 .hubList {
   margin: 1.1rem 0 0;
@@ -2297,7 +2297,7 @@ footer {
 .hubFooter {
   margin-top: 2.5rem;
   padding-top: 1.5rem;
-  border-top: 1px solid #444;
+  border-top: 1px solid #e5e5e5;
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -2308,9 +2308,9 @@ footer {
   min-height: 3rem;
   align-items: center;
   padding: 0 1rem;
-  border: 2px solid #ffb347;
+  border: 2px solid #c45c00;
   border-radius: 0.75rem;
-  color: #ffb347;
+  color: #c45c00;
   font-size: 0.875rem;
   font-weight: 700;
   text-decoration: none;
@@ -2321,8 +2321,8 @@ footer {
   align-items: center;
   padding: 0 1rem;
   border-radius: 0.75rem;
-  background: #fff;
-  color: #1a1a1a;
+  background: #1a1a1a;
+  color: #fff;
   font-size: 0.875rem;
   font-weight: 900;
   text-decoration: none;
