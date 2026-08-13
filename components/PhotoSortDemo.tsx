@@ -48,6 +48,7 @@ export function PhotoSortDemo() {
 
   return (
     <div className="photoRoot">
+      <div className="photoInner">
       <header className="photoHeader">
         <Link href="/" className="photoBack">
           ← ハブ
@@ -144,6 +145,7 @@ export function PhotoSortDemo() {
           </div>
         </section>
       ) : null}
+      </div>
     </div>
   );
 }
