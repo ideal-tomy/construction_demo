@@ -12,7 +12,19 @@ ideal TOP「建設」から飛ぶ **外部ハブ**（製造の `product_flow` `/
 補助: [GENBA 本格アプリ](https://kanri-kensetsu.vercel.app/login)（③画面内リンク）
 
 リポジトリ: https://github.com/ideal-tomy/construction_demo  
-本番: https://construction-demo-two.vercel.app
+**本番URL:** https://construction-demo-two.vercel.app
+
+## 本番URLについて（重要）
+
+Vercel 上のプロジェクト名は `construction-demo` です。ダッシュボードに `two` とは出ません。
+
+公開URLが `construction-demo-two.vercel.app` なのは、`construction-demo.vercel.app` が別会社に取られているためです。`-two` はバージョン番号ではありません。
+
+デプロイするときは **この既存プロジェクトに上書き** してください。新規プロジェクトを作ると別URLが増え、送済みのリンクが更新されません。
+
+```bash
+npx vercel --prod
+```
 
 ## セットアップ
 
@@ -42,7 +54,7 @@ npm run dev
 
 ## 静的アセット（写真デモ）
 
-`/photo` のサンプル画像は `public/images/` 配下（`foundation.png` など）。
+`/photo` のサンプル画像は `public/images/` 配下（`foundation.png` など）。Git に入っています。これがデプロイに含まれないと、色だけのプレースホルダになります。
 
 - **パス・ファイル名は ASCII のみ**（日本語ファイル名は Git / URL エンコード / Vercel 配信で欠落や 404 の原因になりやすい）
 - 参照元: `lib/photoSample.ts` の `photoAssets`
