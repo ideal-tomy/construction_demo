@@ -61,7 +61,7 @@ export function PhotoSortDemo() {
       </header>
 
       <section className="photoPanel">
-        <h2 className="photoPanelTitle">Before · IMGの山</h2>
+        <h2 className="photoPanelTitle">Before ： ファイル名がIMGで始まる写真</h2>
         <ul className="photoGrid">
           {photos.map((p) => (
             <li key={p.id} className="photoThumb">
