@@ -12,13 +12,13 @@ ideal TOP「建設」から飛ぶ **外部ハブ**（製造の `product_flow` `/
 補助: [GENBA 本格アプリ](https://kanri-kensetsu.vercel.app/login)（③画面内リンク）
 
 リポジトリ: https://github.com/ideal-tomy/construction_demo  
-**本番URL:** https://construction-demo-two.vercel.app
+**本番URL:** https://construction-demo-six.vercel.app
 
 ## 本番URLについて（重要）
 
 Vercel 上のプロジェクト名は `construction-demo` です。ダッシュボードに `two` とは出ません。
 
-公開URLが `construction-demo-two.vercel.app` なのは、`construction-demo.vercel.app` が別会社に取られているためです。`-two` はバージョン番号ではありません。
+公開URLが `construction-demo-six.vercel.app` なのは、`construction-demo.vercel.app` が別会社に取られているためです。`-two` はバージョン番号ではありません。
 
 デプロイするときは **この既存プロジェクトに上書き** してください。新規プロジェクトを作ると別URLが増え、送済みのリンクが更新されません。
 

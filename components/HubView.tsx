@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CameraStory } from "@/components/CameraStory";
 import { getRoiSimulatorUrl } from "@/lib/roiLink";
 import { CONTACT_URL, hubCopy, hubDemos, type HubDemo } from "@/lib/hub";
 
@@ -53,6 +54,8 @@ export function HubView() {
           <p className="hubComboLabel">つながると</p>
           <p className="hubComboText">{comboLine}</p>
         </div>
+
+        <CameraStory />
 
         <ol className="hubList">
           {hubDemos.map((demo) => (

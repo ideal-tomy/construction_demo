@@ -2218,6 +2218,556 @@ footer {
   line-height: 1.4;
   color: #1a1a1a;
 }
+
+/* ===== Hub camera-story（暗い映像窓・2人） ===== */
+.camStory {
+  --cs-bg: #0e1114;
+  --cs-panel: #171b21;
+  --cs-panel2: #1e242b;
+  --cs-text: #eef1f4;
+  --cs-sub: #98a3ae;
+  --cs-line: #2a323b;
+  --cs-accent: #ff6b00;
+  --cs-accent-text: #12161a;
+  margin-top: 1rem;
+}
+.camStoryView {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 300px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 12px;
+  background: radial-gradient(120% 90% at 50% 30%, #1b222a 0%, var(--cs-bg) 78%);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--cs-text);
+  -webkit-tap-highlight-color: transparent;
+}
+.camStorySet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 800px;
+  height: 320px;
+  transform-origin: 0 0;
+  transition:
+    transform 1.1s cubic-bezier(0.4, 0.05, 0.25, 1),
+    opacity 0.8s ease;
+}
+.camStorySet.away {
+  opacity: 0.12;
+}
+.camStoryDev {
+  position: absolute;
+  background: var(--cs-panel);
+  border: 1px solid var(--cs-line);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.camStoryBar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 8px;
+  color: var(--cs-sub);
+  padding: 5px 7px;
+  border-bottom: 1px solid var(--cs-line);
+}
+.camStoryBar b {
+  color: var(--cs-accent);
+  font-size: 8px;
+}
+.camStoryBtn {
+  height: 18px;
+  border-radius: 5px;
+  background: var(--cs-panel2);
+  border: 1px solid var(--cs-line);
+  color: var(--cs-sub);
+  font-size: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+/* 現場スマホ */
+.camStoryPhone {
+  left: 60px;
+  top: 64px;
+  width: 96px;
+  height: 190px;
+  border-radius: 13px;
+}
+.camStoryPhone.p1,
+.camStoryPhone.p2 {
+  border-color: var(--cs-accent);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 107, 0, 0.45),
+    0 0 18px rgba(255, 107, 0, 0.35);
+}
+.camStoryPic {
+  height: 62px;
+  margin: 7px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #3a4550, #232a31);
+}
+.camStoryPic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.camStoryNmline {
+  margin: 0 7px 6px;
+  height: 9px;
+  position: relative;
+}
+.camStoryNmline b {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 7px;
+  font-weight: 400;
+  white-space: nowrap;
+  transition: opacity 0.35s ease;
+}
+.camStoryNmOld {
+  color: var(--cs-sub);
+}
+.camStoryNmNew {
+  color: var(--cs-text);
+  opacity: 0;
+}
+.camStoryPhone.p2 .camStoryNmOld {
+  opacity: 0;
+}
+.camStoryPhone.p2 .camStoryNmNew {
+  opacity: 1;
+}
+.camStoryPhone.p3 {
+  border-color: var(--cs-line);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+.camStoryPhone.p4 {
+  border-color: var(--cs-accent);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 107, 0, 0.45),
+    0 0 18px rgba(255, 107, 0, 0.35);
+}
+.camStoryPhone .camStoryBtn {
+  margin: 0 7px;
+}
+.camStoryPhone.p1 .camStoryBtn {
+  background: var(--cs-accent);
+  border-color: var(--cs-accent);
+  color: var(--cs-accent-text);
+  transform: scale(0.95);
+}
+.camStoryPhone.p3 .camStoryBtn {
+  background: var(--cs-panel2);
+  border-color: var(--cs-line);
+  color: var(--cs-accent);
+  transform: none;
+}
+.camStoryNudgeToast {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 28px;
+  padding: 4px 5px;
+  border-radius: 5px;
+  background: var(--cs-accent);
+  color: var(--cs-accent-text);
+  font-size: 7px;
+  font-weight: 700;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+.camStoryPhone.p4 .camStoryNudgeToast {
+  opacity: 1;
+  transform: none;
+}
+
+/* 責任者PC */
+.camStoryPc {
+  left: 340px;
+  top: 70px;
+  width: 280px;
+  height: 175px;
+  border-radius: 8px;
+}
+.camStoryPc.p1,
+.camStoryPc.p2,
+.camStoryPc.p3,
+.camStoryPc.p4,
+.camStoryPc.p5 {
+  border-color: var(--cs-accent);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 107, 0, 0.45),
+    0 0 18px rgba(255, 107, 0, 0.35);
+}
+.camStoryPcBody {
+  padding: 7px 8px 8px;
+  position: relative;
+  height: calc(100% - 24px);
+}
+.camStoryNotify {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 7px 8px;
+  border-radius: 6px;
+  background: #252c35;
+  border: 1px solid var(--cs-line);
+  opacity: 0;
+  transform: translateY(6px);
+  max-height: 0;
+  margin: 0;
+  overflow: hidden;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    max-height 0.4s ease,
+    margin 0.4s ease;
+}
+.camStoryPc.p1 .camStoryNotify {
+  opacity: 1;
+  transform: none;
+  max-height: 48px;
+  margin-bottom: 6px;
+}
+.camStoryNotifyDot {
+  width: 6px;
+  height: 6px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: var(--cs-accent);
+  flex: none;
+}
+.camStoryNotify strong {
+  display: block;
+  font-size: 9px;
+  color: var(--cs-text);
+  font-weight: 700;
+}
+.camStoryNotify em {
+  display: block;
+  font-size: 7px;
+  color: var(--cs-sub);
+  font-style: normal;
+  margin-top: 2px;
+}
+.camStoryPc.p3 .camStoryNotifyDot {
+  background: #3d8f6a;
+}
+.camStoryMissing {
+  padding: 6px 7px;
+  border-radius: 6px;
+  background: #2c2119;
+  border: 1px solid rgba(255, 107, 0, 0.35);
+  opacity: 0;
+  transform: translateY(6px);
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease,
+    max-height 0.4s ease;
+}
+.camStoryPc.p4 .camStoryMissing {
+  opacity: 1;
+  transform: none;
+  max-height: 56px;
+}
+.camStoryMissing strong {
+  display: block;
+  font-size: 9px;
+  color: var(--cs-text);
+}
+.camStoryMissing p {
+  margin: 2px 0 0;
+  font-size: 7px;
+  color: var(--cs-sub);
+}
+.camStoryPcActions {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  display: flex;
+  gap: 6px;
+}
+.camStoryPcActions .camStoryBtn {
+  flex: 1;
+}
+.camStoryConfirm {
+  opacity: 0.55;
+}
+.camStoryPc.p2 .camStoryConfirm {
+  opacity: 1;
+  background: var(--cs-accent);
+  border-color: var(--cs-accent);
+  color: var(--cs-accent-text);
+  transform: scale(0.97);
+}
+.camStoryPc.p3 .camStoryConfirm {
+  opacity: 1;
+  background: var(--cs-panel2);
+  border-color: var(--cs-line);
+  color: var(--cs-accent);
+  transform: none;
+}
+.camStoryNudge {
+  opacity: 0;
+  pointer-events: none;
+}
+.camStoryPc.p4 .camStoryNudge {
+  opacity: 0.7;
+}
+.camStoryPc.p5 .camStoryNudge {
+  opacity: 1;
+  background: var(--cs-accent);
+  border-color: var(--cs-accent);
+  color: var(--cs-accent-text);
+  transform: scale(0.97);
+  pointer-events: auto;
+}
+
+/* 飛ぶもの：写真 → 日報 */
+.camStoryFly {
+  position: absolute;
+  z-index: 9;
+  opacity: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+.camStoryFlyReport {
+  left: 67px;
+  top: 71px;
+  width: 82px;
+  height: 54px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  transition:
+    transform 0.85s cubic-bezier(0.4, 0.1, 0.3, 1),
+    opacity 0.4s ease,
+    width 0.55s ease,
+    height 0.55s ease,
+    border-radius 0.55s ease;
+}
+.camStoryFlyReport.p1 {
+  opacity: 1;
+}
+.camStoryFlyReport.p2 {
+  opacity: 1;
+  transform: translate(160px, 18px) scale(0.72);
+}
+.camStoryFlyReport.p3 {
+  opacity: 0;
+  transform: translate(290px, 24px) scale(0.42);
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+}
+.camStoryFlyImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.45s ease;
+}
+.camStoryFlyReport.p2 .camStoryFlyImg,
+.camStoryFlyReport.p3 .camStoryFlyImg {
+  opacity: 0;
+}
+.camStoryFlyDoc {
+  position: absolute;
+  inset: 0;
+  background: var(--cs-panel);
+  border: 1px solid var(--cs-accent);
+  border-radius: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+.camStoryFlyDoc span {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--cs-line);
+}
+.camStoryFlyDoc span:first-child {
+  width: 70%;
+  background: var(--cs-accent);
+  opacity: 0.85;
+}
+.camStoryFlyDoc span:nth-child(2) {
+  width: 90%;
+}
+.camStoryFlyDoc span:nth-child(3) {
+  width: 55%;
+}
+.camStoryFlyReport.p2 .camStoryFlyDoc,
+.camStoryFlyReport.p3 .camStoryFlyDoc {
+  opacity: 1;
+}
+
+/* 催促の戻り */
+.camStoryFlyNudge {
+  left: 460px;
+  top: 175px;
+  min-width: 36px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--cs-accent);
+  color: var(--cs-accent-text);
+  font-size: 8px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
+  transition:
+    transform 0.75s cubic-bezier(0.4, 0.1, 0.3, 1),
+    opacity 0.35s ease;
+}
+.camStoryFlyNudge.p1 {
+  opacity: 1;
+}
+.camStoryFlyNudge.p2 {
+  opacity: 0;
+  transform: translate(-360px, -40px) scale(0.7);
+}
+
+/* 時間の帯 */
+.camStoryTl {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 28px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  color: var(--cs-text);
+}
+.camStoryTl.p1 {
+  opacity: 1;
+}
+.camStoryTlTitle {
+  font-size: 13px;
+  margin-bottom: 26px;
+  text-align: center;
+  font-weight: 700;
+}
+.camStoryTlTrack {
+  position: relative;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--cs-line);
+}
+.camStoryTlFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: var(--cs-accent);
+  transition: width 1.6s ease;
+}
+.camStoryTl.p2 .camStoryTlFill {
+  width: 100%;
+}
+.camStoryTlStops {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 9px;
+  color: var(--cs-sub);
+  font-style: normal;
+}
+.camStoryTlStops i {
+  font-style: normal;
+}
+.camStoryTlNames {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  font-size: 10px;
+}
+.camStoryTlNames span {
+  color: var(--cs-sub);
+  transition: color 0.4s ease;
+}
+.camStoryTl.p2 .camStoryTlNames span {
+  color: var(--cs-accent);
+}
+
+.camStoryDots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 12px 0 0;
+}
+.camStoryDot {
+  height: 3px;
+  width: 12px;
+  border-radius: 2px;
+  background: #e5e5e5;
+  transition: background 0.3s;
+}
+.camStoryDot.isOn {
+  background: #ff6b00;
+}
+.camStoryCap {
+  min-height: 3.2em;
+  margin: 10px 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #1a1a1a;
+}
+.camStoryNote {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: #6b6b6b;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camStorySet,
+  .camStoryFlyReport,
+  .camStoryFlyNudge,
+  .camStoryNotify,
+  .camStoryMissing,
+  .camStoryNmline b,
+  .camStoryBtn,
+  .camStoryTl,
+  .camStoryTlFill,
+  .camStoryNudgeToast {
+    transition: none !important;
+  }
+}
+
 .hubList {
   margin: 1.1rem 0 0;
   padding: 0;
