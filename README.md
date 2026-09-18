@@ -62,5 +62,6 @@ npm run dev
 
 ## 関連
 
+- [トップ画面の紹介アニメーション：構造と横展開指示](docs/demo-intro-reuse-guide.md)
 - ideal PLAN: `sites/ideal_official/docs/industry-demos/construction.md`
 - UX原則: `sites/ideal_official/docs/industry-demos/ux-saas-principles.md` §4.2

@@ -1,14 +1,29 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { PhotoSortDemo, type PhotoSortPlayback } from "@/components/PhotoSortDemo";
+import {
+  ReportStoryPane,
+  type ReportStoryPhase,
+} from "@/components/ReportStoryPane";
+import { OpsStoryPane, type OpsStoryPhase } from "@/components/ops/OpsStoryPane";
 import {
   CAMERA_STORY_SCENES,
   CAMERA_STORY_STATIC_CAM,
+  PHOTO_STORY_STEP_MS,
   cameraStoryCopy,
-  cameraStoryPhotoSrc,
   type Cam,
+  type StoryAct,
   type StoryEl,
 } from "@/lib/cameraStory";
+import { processingSteps } from "@/lib/photoSample";
+
+const PHOTO_IDLE: PhotoSortPlayback = {
+  logs: [],
+  busy: false,
+  done: false,
+  pressed: false,
+};
 
 function prefersReducedMotion(): boolean {
   if (typeof window === "undefined") return false;
@@ -16,29 +31,33 @@ function prefersReducedMotion(): boolean {
 }
 
 export function CameraStory() {
-  const viewRef = useRef<HTMLButtonElement>(null);
+  const viewRef = useRef<HTMLDivElement>(null);
   const setRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<HTMLDivElement>(null);
   const phRef = useRef<HTMLDivElement>(null);
-  const pcRef = useRef<HTMLDivElement>(null);
+  const officeRef = useRef<HTMLDivElement>(null);
+  const mgrRef = useRef<HTMLDivElement>(null);
   const f1Ref = useRef<HTMLDivElement>(null);
   const f2Ref = useRef<HTMLDivElement>(null);
+  const f3Ref = useRef<HTMLDivElement>(null);
 
   const elMap = useCallback((): Record<StoryEl, HTMLElement | null> => {
     return {
       set: setRef.current,
       tl: tlRef.current,
       ph: phRef.current,
-      pc: pcRef.current,
+      office: officeRef.current,
+      mgr: mgrRef.current,
       f1: f1Ref.current,
       f2: f2Ref.current,
+      f3: f3Ref.current,
     };
   }, []);
 
-  const baseClass = useRef<Partial<Record<StoryEl, string>>>({});
   const atRef = useRef(0);
   const timerRef = useRef<number | null>(null);
   const subsRef = useRef<number[]>([]);
+  const photoTimers = useRef<number[]>([]);
   const runningRef = useRef(false);
   const stepRef = useRef<() => void>(() => {});
 
@@ -46,24 +65,28 @@ export function CameraStory() {
   const [dotIndex, setDotIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [photo, setPhoto] = useState<PhotoSortPlayback>(PHOTO_IDLE);
+  const [reportPhase, setReportPhase] = useState<ReportStoryPhase>("idle");
+  const [opsPhase, setOpsPhase] = useState<OpsStoryPhase>("idle");
+  const [dimmed, setDimmed] = useState(false);
+  const [timeline, setTimeline] = useState<"off" | "show" | "fill">("off");
 
   const camTo = useCallback((c: Cam) => {
     const view = viewRef.current;
     const setEl = setRef.current;
     if (!view || !setEl) return;
     const vw = view.clientWidth;
-    const vh = view.clientHeight;
+    const hud = 62;
+    const vh = Math.max(120, view.clientHeight - hud);
     const x = vw / 2 - c[0] * c[2];
     const y = vh / 2 - c[1] * c[2];
     setEl.style.transform = `translate(${x}px, ${y}px) scale(${c[2]})`;
   }, []);
 
-  const resetAll = useCallback(() => {
+  const resetCss = useCallback(() => {
     const els = elMap();
     (Object.keys(els) as StoryEl[]).forEach((k) => {
-      const el = els[k];
-      const base = baseClass.current[k];
-      if (el && base !== undefined) el.className = base;
+      els[k]?.classList.remove("isOn", "away", "p1", "p2", "p3");
     });
   }, [elMap]);
 
@@ -72,24 +95,88 @@ export function CameraStory() {
     subsRef.current = [];
   }, []);
 
+  const clearPhotoTimers = useCallback(() => {
+    photoTimers.current.forEach((id) => window.clearTimeout(id));
+    photoTimers.current = [];
+  }, []);
+
+  const runAct = useCallback(
+    (act: StoryAct) => {
+      if (act === "reset") {
+        clearPhotoTimers();
+        setPhoto(PHOTO_IDLE);
+        setReportPhase("idle");
+        setOpsPhase("idle");
+        setDimmed(false);
+        setTimeline("off");
+        return;
+      }
+      if (act === "photoPress") {
+        setPhoto((prev) => ({ ...prev, pressed: true }));
+        return;
+      }
+      if (act === "photoRun") {
+        clearPhotoTimers();
+        setPhoto({ logs: [], busy: true, done: false, pressed: true });
+        processingSteps.forEach((step, i) => {
+          const id = window.setTimeout(() => {
+            const last = i === processingSteps.length - 1;
+            setPhoto({
+              logs: processingSteps.slice(0, i + 1).map(String),
+              busy: !last,
+              done: last,
+              pressed: false,
+            });
+          }, (i + 1) * PHOTO_STORY_STEP_MS);
+          photoTimers.current.push(id);
+        });
+        return;
+      }
+      if (act === "reportReceive") setReportPhase("ready");
+      if (act === "reportGenPress") setReportPhase("generatePress");
+      if (act === "reportDrafting") setReportPhase("drafting");
+      if (act === "reportDone") setReportPhase("draft");
+      if (act === "reportConfirmPress") setReportPhase("confirmPress");
+      if (act === "reportFormal") setReportPhase("formal");
+      if (act === "reportSubmitPress") setReportPhase("submitPress");
+      if (act === "reportSubmitted") setReportPhase("submitted");
+      if (act === "opsArrive") setOpsPhase("arrive");
+      if (act === "opsReview") setOpsPhase("reviewed");
+      if (act === "opsNudge") setOpsPhase("nudged");
+      if (act === "opsSubmitPress") setOpsPhase("submitPress");
+      if (act === "opsSubmitted") setOpsPhase("submitted");
+      if (act === "dim") setDimmed(true);
+      if (act === "tlOn") setTimeline("show");
+      if (act === "tlFill") setTimeline("fill");
+    },
+    [clearPhotoTimers]
+  );
+
   const play = useCallback(
     (i: number) => {
       const s = CAMERA_STORY_SCENES[i];
-      if (i === 0) resetAll();
+      resetCss();
+      if (i === 0) {
+        setDimmed(false);
+        setTimeline("off");
+      }
       camTo(s.cam);
       clearSubs();
       const els = elMap();
-      s.do.forEach(([delay, elKey, phase]) => {
+      s.css.forEach(([delay, elKey, phase]) => {
         const id = window.setTimeout(() => {
           els[elKey]?.classList.add(phase);
         }, delay);
         subsRef.current.push(id);
       });
-      if (s.text) setCaption(s.text);
-      else setCaption("");
+      s.acts.forEach(([delay, act]) => {
+        const id = window.setTimeout(() => runAct(act), delay);
+        subsRef.current.push(id);
+      });
+      setCaption(s.text);
       setDotIndex(i);
     },
-    [camTo, clearSubs, elMap, resetAll]
+    [camTo, clearSubs, elMap, resetCss, runAct]
   );
 
   const stop = useCallback(() => {
@@ -123,13 +210,20 @@ export function CameraStory() {
   useLayoutEffect(() => {
     const els = elMap();
     (Object.keys(els) as StoryEl[]).forEach((k) => {
-      const el = els[k];
-      if (el) baseClass.current[k] = el.className;
+      els[k]?.classList.remove("isOn", "away", "p1", "p2", "p3");
     });
 
     if (prefersReducedMotion()) {
       setReduced(true);
       setCaption(cameraStoryCopy.reducedCaption);
+      setPhoto({
+        logs: processingSteps.map(String),
+        busy: false,
+        done: true,
+        pressed: false,
+      });
+      setReportPhase("submitted");
+      setOpsPhase("submitted");
       camTo(CAMERA_STORY_STATIC_CAM);
       return;
     }
@@ -146,9 +240,10 @@ export function CameraStory() {
     window.addEventListener("resize", onResize);
     return () => {
       stop();
+      clearPhotoTimers();
       window.removeEventListener("resize", onResize);
     };
-  }, [camTo, elMap, start, stop]);
+  }, [camTo, clearPhotoTimers, elMap, start, stop]);
 
   const onToggle = () => {
     if (reduced) return;
@@ -156,88 +251,84 @@ export function CameraStory() {
     else start();
   };
 
+  const playLabel = reduced
+    ? "現場から責任者への流れ"
+    : paused
+      ? "説明を再生する"
+      : "説明を一時停止する";
+
   return (
     <div className="camStory">
-      <button
-        type="button"
-        className="camStoryView"
-        ref={viewRef}
-        onClick={onToggle}
-        aria-label={
-          reduced
-            ? "現場から責任者への流れ"
-            : paused
-              ? "説明を再生する"
-              : "説明を一時停止する"
-        }
-      >
-        <div className="camStorySet" ref={setRef}>
+      <div className="camStoryView" ref={viewRef}>
+        <div
+          className={`camStorySet${dimmed ? " away" : ""}`}
+          ref={setRef}
+          aria-hidden
+          inert
+        >
           <div className="camStoryDev camStoryPhone" ref={phRef}>
+            <span className="camStoryPhoneIsland" />
+            <div className="camStoryPhoneStatus">
+              <span>16:40</span>
+              <em>現場</em>
+              <span>LTE</span>
+            </div>
+            <div className="camStoryScreen camStoryPhoneScreen">
+              <div className="camStoryPhoneScale">
+                <PhotoSortDemo embed playback={photo} />
+              </div>
+            </div>
+            <span className={`camStoryTap${photo.pressed ? " isOn" : ""}`} />
+            <span className="camStoryPhoneHome" />
+          </div>
+
+          <div className="camStoryDev camStoryPc camStoryOffice" ref={officeRef}>
             <div className="camStoryBar">
-              <b>現場</b>スマホ
+              <b>内勤</b>報告書
             </div>
-            <div className="camStoryPic">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={cameraStoryPhotoSrc} alt="" />
-            </div>
-            <div className="camStoryNmline">
-              <b className="camStoryNmOld">{cameraStoryCopy.phoneOldName}</b>
-              <b className="camStoryNmNew">{cameraStoryCopy.phoneNewName}</b>
-            </div>
-            <div className="camStoryBtn">{cameraStoryCopy.sendLabel}</div>
-            <div className="camStoryNudgeToast" aria-hidden>
-              撮り直し依頼
+            <div className="camStoryScreen camStoryPcScreen">
+              <div className="camStoryPcScale">
+                <ReportStoryPane phase={reportPhase} />
+              </div>
             </div>
           </div>
 
-          <div className="camStoryDev camStoryPc" ref={pcRef}>
+          <div className="camStoryDev camStoryPc camStoryMgr" ref={mgrRef}>
             <div className="camStoryBar">
-              <b>{cameraStoryCopy.pcBar}</b>
-              {cameraStoryCopy.pcBarSub}
+              <b>責任者</b>承認
             </div>
-            <div className="camStoryPcBody">
-              <div className="camStoryNotify">
-                <span className="camStoryNotifyDot" />
-                <div>
-                  <strong>{cameraStoryCopy.notifyTitle}</strong>
-                  <em>{cameraStoryCopy.notifyMeta}</em>
-                </div>
-              </div>
-              <div className="camStoryMissing">
-                <strong>{cameraStoryCopy.missingLabel}</strong>
-                <p>{cameraStoryCopy.missingReason}</p>
-              </div>
-              <div className="camStoryPcActions">
-                <span className="camStoryBtn camStoryConfirm">
-                  {cameraStoryCopy.confirmLabel}
-                </span>
-                <span className="camStoryBtn camStoryNudge">
-                  {cameraStoryCopy.nudgeLabel}
-                </span>
+            <div className="camStoryScreen camStoryPcScreen">
+              <div className="camStoryPcScale">
+                <OpsStoryPane phase={opsPhase} />
               </div>
             </div>
           </div>
 
           <div className="camStoryFly camStoryFlyReport" ref={f1Ref}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className="camStoryFlyImg"
-              src={cameraStoryPhotoSrc}
-              alt=""
-            />
-            <div className="camStoryFlyDoc" aria-hidden>
-              <span />
-              <span />
-              <span />
-            </div>
+            <img src="/images/foundation.png" alt="" />
+            <span>日報</span>
           </div>
-
-          <div className="camStoryFly camStoryFlyNudge" ref={f2Ref}>
-            催促
+          <div className="camStoryFly camStoryFlyDoc" ref={f2Ref}>
+            <i />
+            <i />
+            <i />
+            <span>報告書</span>
+          </div>
+          <div className="camStoryFly camStoryFlyNudge" ref={f3Ref}>
+            <i />
+            <i />
+            <i />
+            <span>差し戻し</span>
           </div>
         </div>
 
-        <div className="camStoryTl" ref={tlRef}>
+        <div
+          className={`camStoryTl${timeline !== "off" ? " p1" : ""}${
+            timeline === "fill" ? " p2" : ""
+          }`}
+          ref={tlRef}
+        >
           <div className="camStoryTlTitle">{cameraStoryCopy.timelineTitle}</div>
           <div className="camStoryTlTrack">
             <span className="camStoryTlFill" />
@@ -253,19 +344,27 @@ export function CameraStory() {
             ))}
           </div>
         </div>
-      </button>
 
-      <div className="camStoryDots" aria-hidden>
-        {CAMERA_STORY_SCENES.map((_, i) => (
-          <span
-            key={i}
-            className={`camStoryDot${i === dotIndex ? " isOn" : ""}`}
-          />
-        ))}
+        <div className="camStoryHud">
+          <div className="camStoryDots" aria-hidden>
+            {CAMERA_STORY_SCENES.map((_, i) => (
+              <span
+                key={i}
+                className={`camStoryDot${i === dotIndex ? " isOn" : ""}`}
+              />
+            ))}
+          </div>
+          <p className="camStoryCap">{caption || "\u00a0"}</p>
+        </div>
+        <button
+          type="button"
+          className="camStoryHit"
+          onClick={onToggle}
+          aria-label={playLabel}
+        />
       </div>
-      <p className="camStoryCap">{caption}</p>
       {!reduced ? (
-        <p className="camStoryNote">{cameraStoryCopy.note}</p>
+        <p className="camStoryHint">{cameraStoryCopy.note}</p>
       ) : null}
     </div>
   );
