@@ -2219,6 +2219,18 @@ footer {
   color: #1a1a1a;
 }
 
+/* 厳選版詳細への iframe 埋め込み（?embed=intro） */
+.embedIntroRoot {
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background: #0e1114;
+  color: #eef1f4;
+}
+.embedIntroRoot .camStory {
+  margin: 0;
+}
+
 /* ===== Hub camera-story（暗い映像窓・現場→内勤→責任者） ===== */
 .camStory {
   --cs-bg: #0e1114;
