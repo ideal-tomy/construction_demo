@@ -30,7 +30,13 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function CameraStory({ stage = false }: { stage?: boolean }) {
+export function CameraStory({
+  stage = false,
+  embed = false,
+}: {
+  stage?: boolean;
+  embed?: boolean;
+}) {
   const viewRef = useRef<HTMLDivElement>(null);
   const setRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<HTMLDivElement>(null);
@@ -76,11 +82,11 @@ export function CameraStory({ stage = false }: { stage?: boolean }) {
 
   useLayoutEffect(() => {
     if (!stage) return;
-    document.documentElement.classList.add("cam-embed-stage-root");
-    document.body.classList.add("cam-embed-stage-root");
+    document.documentElement.classList.add("ki-embed-stage-root");
+    document.body.classList.add("ki-embed-stage-root");
     return () => {
-      document.documentElement.classList.remove("cam-embed-stage-root");
-      document.body.classList.remove("cam-embed-stage-root");
+      document.documentElement.classList.remove("ki-embed-stage-root");
+      document.body.classList.remove("ki-embed-stage-root");
     };
   }, [stage]);
 
@@ -272,7 +278,16 @@ export function CameraStory({ stage = false }: { stage?: boolean }) {
       : "説明を一時停止する";
 
   return (
-    <div className={`camStory${stage ? " camStoryStage" : ""}`}>
+    <section
+      className={`camStory${stage ? " camStoryStage" : ""}${embed ? " camStoryEmbed" : ""}`}
+      aria-label="現場写真から報告書までの使い方"
+    >
+      {embed && !stage ? (
+        <div className="ki-story-top">
+          <span>{cameraStoryCopy.embedTitle}</span>
+          <span>{cameraStoryCopy.embedMeta}</span>
+        </div>
+      ) : null}
       <div className="camStoryView" ref={viewRef}>
         <div
           className={`camStorySet${dimmed ? " away" : ""}`}
@@ -337,27 +352,29 @@ export function CameraStory({ stage = false }: { stage?: boolean }) {
           </div>
         </div>
 
-        <div
-          className={`camStoryTl${timeline !== "off" ? " p1" : ""}${
-            timeline === "fill" ? " p2" : ""
-          }`}
-          ref={tlRef}
-        >
-          <div className="camStoryTlTitle">{cameraStoryCopy.timelineTitle}</div>
-          <div className="camStoryTlTrack">
-            <span className="camStoryTlFill" />
+        {stage ? null : (
+          <div
+            className={`camStoryTl${timeline !== "off" ? " p1" : ""}${
+              timeline === "fill" ? " p2" : ""
+            }`}
+            ref={tlRef}
+          >
+            <div className="camStoryTlTitle">{cameraStoryCopy.timelineTitle}</div>
+            <div className="camStoryTlTrack">
+              <span className="camStoryTlFill" />
+            </div>
+            <div className="camStoryTlStops">
+              {cameraStoryCopy.timelineStops.map((t) => (
+                <i key={t}>{t}</i>
+              ))}
+            </div>
+            <div className="camStoryTlNames">
+              {cameraStoryCopy.timelineNames.map((n) => (
+                <span key={n}>{n}</span>
+              ))}
+            </div>
           </div>
-          <div className="camStoryTlStops">
-            {cameraStoryCopy.timelineStops.map((t) => (
-              <i key={t}>{t}</i>
-            ))}
-          </div>
-          <div className="camStoryTlNames">
-            {cameraStoryCopy.timelineNames.map((n) => (
-              <span key={n}>{n}</span>
-            ))}
-          </div>
-        </div>
+        )}
 
         {stage ? null : (
           <div className="camStoryHud">
@@ -383,11 +400,11 @@ export function CameraStory({ stage = false }: { stage?: boolean }) {
       </div>
       {stage
         ? motion
-          ? <p className="camStoryMotion">{motion}</p>
+          ? <p className="ki-motion">{motion}</p>
           : null
         : !reduced
           ? <p className="camStoryHint">{cameraStoryCopy.note}</p>
           : null}
-    </div>
+    </section>
   );
 }

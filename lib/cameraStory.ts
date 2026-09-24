@@ -41,6 +41,8 @@ export type StoryScene = {
 };
 
 export const cameraStoryCopy = {
+  embedTitle: "使い方を見てみる",
+  embedMeta: "約50秒 · 現場から承認まで",
   note: "押すと止まります。もう一度押すと動き出します。",
   reducedCaption:
     "現場は撮って送る。内勤で日報になり、責任者が承認します。",

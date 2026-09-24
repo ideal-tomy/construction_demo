@@ -10,9 +10,9 @@ export default async function HubPage({ searchParams }: Props) {
   if (sp.embed === "intro") {
     const stage = sp.view === "stage";
     return (
-      <div className={`embedIntroRoot${stage ? " embedIntroStage" : ""}`}>
-        <CameraStory stage={stage} />
-      </div>
+      <main className={`ki-embed-intro${stage ? " ki-embed-stage" : ""}`}>
+        <CameraStory stage={stage} embed />
+      </main>
     );
   }
   return <HubView />;

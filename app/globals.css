@@ -2219,36 +2219,64 @@ footer {
   color: #1a1a1a;
 }
 
-/* 厳選版詳細への iframe 埋め込み（?embed=intro） */
-.embedIntroRoot {
-  min-height: 100dvh;
-  margin: 0;
-  padding: 0;
-  background: #0e1114;
-  color: #eef1f4;
+/* 厳選版詳細への iframe 埋め込み（?embed=intro）— 他デモと同じ ki-embed-* */
+.ki-story-top {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid #ffffff13;
+  font-size: 11px;
+  color: #b7c9dc;
 }
-.embedIntroRoot .camStory {
+.ki-story-top span:first-child {
+  color: #fff;
+  font-weight: 600;
+}
+.ki-embed-intro {
   margin: 0;
+  min-height: 100dvh;
+  background: #111e2e;
+  color: #f0f5fc;
+  font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+.ki-embed-intro .camStory {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  min-height: 100dvh;
+}
+.ki-embed-intro .camStoryEmbed {
+  background: #111e2e;
+  color: #f0f5fc;
+  overflow: hidden;
 }
 
 /* 操作画面だけ（?embed=intro&view=stage） */
-html.cam-embed-stage-root,
-html.cam-embed-stage-root body,
-.embedIntroStage {
+html.ki-embed-stage-root,
+html.ki-embed-stage-root body,
+.ki-embed-stage,
+.ki-embed-stage .camStory {
   margin: 0;
   min-height: 0 !important;
   background: #fff !important;
   color: #1c2740;
 }
-.embedIntroStage .camStory {
-  margin: 0;
+.camStoryStage {
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  background: #fff;
+  color: #1c2740;
+  font-family: "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif;
 }
 .camStoryStage .camStoryView {
+  height: 360px;
   border-radius: 0;
-  background: #fff;
+  background: #fff !important;
   cursor: default;
 }
-.camStoryMotion {
+.ki-motion {
   margin: 12px auto 0;
   max-width: 580px;
   padding: 0 12px;
@@ -2270,6 +2298,11 @@ html.cam-embed-stage-root body,
   --cs-accent: #ff6b00;
   --cs-accent-text: #12161a;
   margin-top: 1rem;
+}
+.ki-embed-intro .camStory,
+.camStoryStage,
+.camStoryEmbed {
+  margin-top: 0;
 }
 .camStoryView {
   position: relative;
