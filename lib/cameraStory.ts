@@ -34,6 +34,8 @@ export type StoryScene = {
   cam: Cam;
   ms: number;
   text: string;
+  /** 厳選版 stage 表示用。画面の動きを名指しする短い1行。空なら出さない。 */
+  motion: string;
   css: StoryCssAction[];
   acts: StoryActAction[];
 };
@@ -61,6 +63,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [118, 193, 0.92],
     ms: 5600,
     text: "現場で撮った写真に、名前が付きます。",
+    motion: "写真に、名前が付く",
     css: [[0, "ph", "isOn"]],
     acts: [
       [0, "reset"],
@@ -72,6 +75,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [280, 190, 0.58],
     ms: 5600,
     text: "写真が、内勤の報告書へ届きます。",
+    motion: "写真が、報告書へ",
     css: [
       [200, "f1", "p1"],
       [400, "f1", "p2"],
@@ -84,6 +88,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [430, 188, 0.9],
     ms: 6400,
     text: "ボタン一つで、日報が自動で埋まります。",
+    motion: "日報が埋まる",
     css: [[0, "office", "isOn"]],
     acts: [
       [500, "reportGenPress"],
@@ -95,6 +100,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [430, 188, 0.9],
     ms: 5200,
     text: "もう一度押すと、送付用の報告書になります。",
+    motion: "報告書になる",
     css: [[0, "office", "isOn"]],
     acts: [
       [600, "reportConfirmPress"],
@@ -105,6 +111,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [640, 188, 0.52],
     ms: 6200,
     text: "提出すると、責任者の承認へ届きます。",
+    motion: "承認へ届く",
     css: [
       [0, "office", "isOn"],
       [1400, "f2", "p1"],
@@ -122,6 +129,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [820, 188, 0.88],
     ms: 5000,
     text: "責任者の画面で、過不足が一目で分かります。",
+    motion: "過不足が一目で",
     css: [[0, "mgr", "isOn"]],
     acts: [[1600, "opsReview"]],
   },
@@ -129,6 +137,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [640, 188, 0.52],
     ms: 5600,
     text: "足りない写真は、差し戻して撮り直せます。",
+    motion: "差し戻して撮り直す",
     css: [
       [0, "mgr", "isOn"],
       [400, "f3", "p1"],
@@ -142,6 +151,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [820, 188, 0.88],
     ms: 4200,
     text: "承認は、ボタン一つで終わります。",
+    motion: "承認する",
     css: [[0, "mgr", "isOn"]],
     acts: [
       [900, "opsSubmitPress"],
@@ -152,6 +162,7 @@ export const CAMERA_STORY_SCENES: StoryScene[] = [
     cam: [530, 190, 0.38],
     ms: 5200,
     text: "",
+    motion: "",
     css: [],
     acts: [
       [200, "dim"],

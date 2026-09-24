@@ -30,7 +30,7 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function CameraStory() {
+export function CameraStory({ stage = false }: { stage?: boolean }) {
   const viewRef = useRef<HTMLDivElement>(null);
   const setRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<HTMLDivElement>(null);
@@ -40,6 +40,8 @@ export function CameraStory() {
   const f1Ref = useRef<HTMLDivElement>(null);
   const f2Ref = useRef<HTMLDivElement>(null);
   const f3Ref = useRef<HTMLDivElement>(null);
+  const stageRef = useRef(stage);
+  stageRef.current = stage;
 
   const elMap = useCallback((): Record<StoryEl, HTMLElement | null> => {
     return {
@@ -62,6 +64,7 @@ export function CameraStory() {
   const stepRef = useRef<() => void>(() => {});
 
   const [caption, setCaption] = useState(CAMERA_STORY_SCENES[0].text);
+  const [motion, setMotion] = useState(CAMERA_STORY_SCENES[0].motion);
   const [dotIndex, setDotIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const [paused, setPaused] = useState(false);
@@ -71,12 +74,22 @@ export function CameraStory() {
   const [dimmed, setDimmed] = useState(false);
   const [timeline, setTimeline] = useState<"off" | "show" | "fill">("off");
 
+  useLayoutEffect(() => {
+    if (!stage) return;
+    document.documentElement.classList.add("cam-embed-stage-root");
+    document.body.classList.add("cam-embed-stage-root");
+    return () => {
+      document.documentElement.classList.remove("cam-embed-stage-root");
+      document.body.classList.remove("cam-embed-stage-root");
+    };
+  }, [stage]);
+
   const camTo = useCallback((c: Cam) => {
     const view = viewRef.current;
     const setEl = setRef.current;
     if (!view || !setEl) return;
     const vw = view.clientWidth;
-    const hud = 62;
+    const hud = stageRef.current ? 0 : 62;
     const vh = Math.max(120, view.clientHeight - hud);
     const x = vw / 2 - c[0] * c[2];
     const y = vh / 2 - c[1] * c[2];
@@ -174,6 +187,7 @@ export function CameraStory() {
         subsRef.current.push(id);
       });
       setCaption(s.text);
+      setMotion(s.motion);
       setDotIndex(i);
     },
     [camTo, clearSubs, elMap, resetCss, runAct]
@@ -258,7 +272,7 @@ export function CameraStory() {
       : "説明を一時停止する";
 
   return (
-    <div className="camStory">
+    <div className={`camStory${stage ? " camStoryStage" : ""}`}>
       <div className="camStoryView" ref={viewRef}>
         <div
           className={`camStorySet${dimmed ? " away" : ""}`}
@@ -345,27 +359,35 @@ export function CameraStory() {
           </div>
         </div>
 
-        <div className="camStoryHud">
-          <div className="camStoryDots" aria-hidden>
-            {CAMERA_STORY_SCENES.map((_, i) => (
-              <span
-                key={i}
-                className={`camStoryDot${i === dotIndex ? " isOn" : ""}`}
-              />
-            ))}
+        {stage ? null : (
+          <div className="camStoryHud">
+            <div className="camStoryDots" aria-hidden>
+              {CAMERA_STORY_SCENES.map((_, i) => (
+                <span
+                  key={i}
+                  className={`camStoryDot${i === dotIndex ? " isOn" : ""}`}
+                />
+              ))}
+            </div>
+            <p className="camStoryCap">{caption || "\u00a0"}</p>
           </div>
-          <p className="camStoryCap">{caption || "\u00a0"}</p>
-        </div>
-        <button
-          type="button"
-          className="camStoryHit"
-          onClick={onToggle}
-          aria-label={playLabel}
-        />
+        )}
+        {stage ? null : (
+          <button
+            type="button"
+            className="camStoryHit"
+            onClick={onToggle}
+            aria-label={playLabel}
+          />
+        )}
       </div>
-      {!reduced ? (
-        <p className="camStoryHint">{cameraStoryCopy.note}</p>
-      ) : null}
+      {stage
+        ? motion
+          ? <p className="camStoryMotion">{motion}</p>
+          : null
+        : !reduced
+          ? <p className="camStoryHint">{cameraStoryCopy.note}</p>
+          : null}
     </div>
   );
 }

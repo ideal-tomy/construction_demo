@@ -2231,6 +2231,34 @@ footer {
   margin: 0;
 }
 
+/* 操作画面だけ（?embed=intro&view=stage） */
+html.cam-embed-stage-root,
+html.cam-embed-stage-root body,
+.embedIntroStage {
+  margin: 0;
+  min-height: 0 !important;
+  background: #fff !important;
+  color: #1c2740;
+}
+.embedIntroStage .camStory {
+  margin: 0;
+}
+.camStoryStage .camStoryView {
+  border-radius: 0;
+  background: #fff;
+  cursor: default;
+}
+.camStoryMotion {
+  margin: 12px auto 0;
+  max-width: 580px;
+  padding: 0 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.7;
+  color: #26418e;
+}
+
 /* ===== Hub camera-story（暗い映像窓・現場→内勤→責任者） ===== */
 .camStory {
   --cs-bg: #0e1114;
