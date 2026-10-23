@@ -5,6 +5,7 @@ import { RoiPaybackCta } from "@/components/RoiPaybackCta";
 import type { WorkflowStatus } from "@/lib/types";
 
 type Props = {
+  roiHref: string | null;
   status: WorkflowStatus;
   reviewCount: number;
   canGenerate: boolean;
@@ -21,6 +22,7 @@ type Props = {
 };
 
 export function WorkflowActions({
+  roiHref,
   status,
   reviewCount,
   canGenerate,
@@ -183,7 +185,7 @@ export function WorkflowActions({
                       管理画面で確認 →
                     </button>
                   ) : null}
-                  <RoiPaybackCta />
+                  <RoiPaybackCta href={roiHref} />
                 </>
               )}
             </div>
@@ -277,7 +279,7 @@ export function WorkflowActions({
               ③ 管理画面で確認 →
             </button>
           ) : null}
-          <RoiPaybackCta />
+          <RoiPaybackCta href={roiHref} />
         </>
       )}
     </div>

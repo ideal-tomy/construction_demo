@@ -2,10 +2,6 @@
 
 export const KANRI_OPS_URL = "https://kanri-kensetsu.vercel.app/login";
 
-export const CONTACT_URL =
-  process.env.NEXT_PUBLIC_CONTACT_URL?.trim() ||
-  "https://ideal-official-three.vercel.app/contact?service=ai-consulting&intent=gallery&demo=construction-hub";
-
 export type HubDemo = {
   id: "photo" | "report" | "ops";
   step: "①" | "②" | "③";

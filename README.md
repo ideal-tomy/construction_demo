@@ -40,7 +40,18 @@ OPENAI_MODEL=gpt-5-nano
 NEXT_PUBLIC_ROI_SIMULATOR_URL=https://roi-simulator-eta.vercel.app
 # 任意
 # NEXT_PUBLIC_CONTACT_URL=https://…/contact
+# NEXT_PUBLIC_AXEON_CONTACT_URL=https://www.axeon.jp/contact
+# NEXT_PUBLIC_IDEAL_CONTACT_URL=https://ideal-official-three.vercel.app/contact
 ```
+
+## ブランド別の入口と見積もり
+
+- AXEON: `/?brand=axeon`。IDEAL: `/?brand=ideal`。
+- ブランド未指定・不正値は従来互換でIDEAL。写真・報告・管理画面へ直接入る場合も `brand` を指定できます。
+- 画面間のリンク、見積もり、相談先は同じブランドを使用します。共有ブラウザストレージにブランドは保存しません。
+- 相談先の上書きはブランド別の変数を使用します。既存 `NEXT_PUBLIC_CONTACT_URL` はIDEALだけの互換設定です。
+- ブランド名・公式サイト・既定問い合わせ先は `lib/demo-brand.ts` の `DEMO_BRANDS` で管理します。問い合わせ先の上書きは同ブランドの許可済みHTTPSオリジンのみを受け付け、不正値・別ブランド・未登録ドメインは既定問い合わせ先に戻します。公式ドメインを変更する際はこの設定も更新してください。
+- 見積もりURLはサーバーで解決して完了CTAにも渡します。`NEXT_PUBLIC_ROI_SIMULATOR_URL` が未設定ならCTAは非表示ですが、本番で見積もりを提供する場合は設定が必須です。設定後は再ビルド・再デプロイして実導線を確認してください。
 
 ```bash
 npm run dev

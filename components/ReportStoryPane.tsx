@@ -50,7 +50,7 @@ function storySample() {
   if (!sample || sample.draft.templateId !== "site_daily_report_v1") {
     throw new Error("report story sample missing");
   }
-  return sample;
+  return { ...sample, draft: sample.draft };
 }
 
 function storyImages(): SourceImage[] {

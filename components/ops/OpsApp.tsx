@@ -5,6 +5,7 @@ import { OpsDashboard } from "@/components/ops/OpsDashboard";
 import { OpsNotificationDetail } from "@/components/ops/OpsNotificationDetail";
 import { OpsNudgeModal } from "@/components/ops/OpsNudgeModal";
 import { OpsShell } from "@/components/ops/OpsShell";
+import { consumeDemoFrom, type DemoBrand } from "@/lib/demo-brand";
 import {
   buildDefaultOpsNotification,
   buildOpsNotificationFromHandoff,
@@ -15,7 +16,7 @@ import {
   type OpsNotification
 } from "@/lib/opsSample";
 
-export function OpsApp() {
+export function OpsApp({ brand }: { brand: DemoBrand }) {
   const [notifications, setNotifications] = useState<OpsNotification[]>([
     buildDefaultOpsNotification()
   ]);
@@ -42,7 +43,10 @@ export function OpsApp() {
       clearOpsHandoff();
       if (fromReport) {
         setArrival(true);
-        window.history.replaceState({}, "", "/ops");
+        window.history.replaceState(
+          window.history.state, "",
+          consumeDemoFrom(`${window.location.pathname}${window.location.search}${window.location.hash}`, brand),
+        );
         window.setTimeout(() => setArrival(false), 4200);
       }
     } else if (fromReport) {
@@ -53,7 +57,10 @@ export function OpsApp() {
         })
       ]);
       setArrival(true);
-      window.history.replaceState({}, "", "/ops");
+      window.history.replaceState(
+        window.history.state, "",
+        consumeDemoFrom(`${window.location.pathname}${window.location.search}${window.location.hash}`, brand),
+      );
       window.setTimeout(() => setArrival(false), 4200);
     }
   }, []);
@@ -89,7 +96,7 @@ export function OpsApp() {
   }
 
   return (
-    <OpsShell toast={toast}>
+    <OpsShell brand={brand} toast={toast}>
       <OpsDashboard
         notifications={notifications}
         missing={missing}

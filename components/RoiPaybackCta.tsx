@@ -1,7 +1,4 @@
-import { getRoiSimulatorUrl } from "@/lib/roiLink";
-
-export function RoiPaybackCta() {
-  const href = getRoiSimulatorUrl();
+export function RoiPaybackCta({ href }: { href: string | null }) {
   if (!href) return null;
 
   return (

@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { CameraStory } from "@/components/CameraStory";
-import { getRoiSimulatorUrl } from "@/lib/roiLink";
-import { CONTACT_URL, hubCopy, hubDemos, type HubDemo } from "@/lib/hub";
+import { DEMO_BRAND_NAMES, demoHref, type DemoBrand } from "@/lib/demo-brand";
+import { hubCopy, hubDemos, type HubDemo } from "@/lib/hub";
 
-function DemoCard({ demo }: { demo: HubDemo }) {
+function DemoCard({ demo, brand }: { demo: HubDemo; brand: DemoBrand }) {
   const body = (
     <>
       <div>
@@ -34,20 +34,23 @@ function DemoCard({ demo }: { demo: HubDemo }) {
   }
 
   return (
-    <Link href={demo.href} className="hubCard">
+    <Link href={demoHref(demo.href, brand)} className="hubCard">
       {body}
     </Link>
   );
 }
 
-export function HubView() {
-  const roiHref = getRoiSimulatorUrl();
+export function HubView({ brand, roiHref, contactHref }: {
+  brand: DemoBrand;
+  roiHref: string | null;
+  contactHref: string;
+}) {
   const { title, englishLabel, comboLine } = hubCopy;
 
   return (
     <div className="hubRoot">
       <div className="hubInner">
-        <p className="hubEyebrow">{englishLabel}</p>
+        <p className="hubEyebrow">{DEMO_BRAND_NAMES[brand]} / {englishLabel}</p>
         <h1 className="hubTitle">{title}</h1>
 
         <div className="hubCombo">
@@ -60,7 +63,7 @@ export function HubView() {
         <ol className="hubList">
           {hubDemos.map((demo) => (
             <li key={demo.id}>
-              <DemoCard demo={demo} />
+              <DemoCard demo={demo} brand={brand} />
             </li>
           ))}
         </ol>
@@ -76,7 +79,7 @@ export function HubView() {
               投資回収の目安 ↗
             </a>
           ) : null}
-          <a href={CONTACT_URL} className="hubContact">
+          <a href={contactHref} className="hubContact">
             相談する
           </a>
         </div>

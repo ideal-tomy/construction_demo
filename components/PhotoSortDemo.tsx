@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { DEMO_BRAND_NAMES, demoHref, type DemoBrand } from "@/lib/demo-brand";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   constructionPhotoSample,
@@ -15,11 +16,12 @@ export type PhotoSortPlayback = {
 };
 
 type Props = {
+  brand?: DemoBrand;
   embed?: boolean;
   playback?: PhotoSortPlayback;
 };
 
-export function PhotoSortDemo({ embed = false, playback }: Props) {
+export function PhotoSortDemo({ brand = "ideal", embed = false, playback }: Props) {
   const [logs, setLogs] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -77,11 +79,11 @@ export function PhotoSortDemo({ embed = false, playback }: Props) {
       <div className="photoInner">
       <header className="photoHeader">
         {embed ? null : (
-          <Link href="/" className="photoBack">
+          <Link href={demoHref("/", brand)} className="photoBack">
             ← ハブ
           </Link>
         )}
-        <p className="photoStep">① 写真の仕事化</p>
+        <p className="photoStep">{embed ? "" : `${DEMO_BRAND_NAMES[brand]} / `}① 写真の仕事化</p>
         <h1 className="photoTitle">散在写真 → 分類・命名</h1>
         {embed ? null : (
           <p className="photoLead">
@@ -173,7 +175,7 @@ export function PhotoSortDemo({ embed = false, playback }: Props) {
               <p className="photoNextLead">
                 整えた写真を載せたまま、報告書の下書きへ進みます
               </p>
-              <Link href="/report?from=photo" className="photoPrimaryLink">
+              <Link href={demoHref("/report?from=photo", brand)} className="photoPrimaryLink">
                 ② 報告書下書きへ →
               </Link>
             </div>

@@ -3,8 +3,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { KANRI_OPS_URL } from "@/lib/hub";
+import { DEMO_BRAND_NAMES, demoHref, type DemoBrand } from "@/lib/demo-brand";
 
 type Props = {
+  brand: DemoBrand;
   children: ReactNode;
   toast?: string | null;
 };
@@ -15,14 +17,14 @@ const NAV_ITEMS = [
   { id: "sites", label: "現場", active: false }
 ] as const;
 
-export function OpsShell({ children, toast }: Props) {
+export function OpsShell({ children, toast, brand }: Props) {
   return (
     <div className="opsRoot">
       <aside className="opsSidebar" aria-label="管理メニュー">
         <div className="opsBrand">
           <span className="opsBrandMark">G</span>
           <div>
-            <strong>現場オペ</strong>
+            <strong>{DEMO_BRAND_NAMES[brand]} / 現場オペ</strong>
             <p>内勤ダッシュボード</p>
           </div>
         </div>
@@ -43,7 +45,7 @@ export function OpsShell({ children, toast }: Props) {
       <div className="opsMain">
         <header className="opsTopbar">
           <div className="opsTopbarLeft">
-            <Link href="/" className="opsBack">
+            <Link href={demoHref("/", brand)} className="opsBack">
               ← ハブ
             </Link>
             <div>

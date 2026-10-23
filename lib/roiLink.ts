@@ -1,17 +1,20 @@
+import type { DemoBrand } from "./demo-brand";
+
 const ROI_PARAMS = {
   kit: "report-auto",
   industry: "construction",
   cat: "internal",
   from: "construction-demo",
-  brand: "ideal",
 } as const;
 
 /** roi-simulator への導線URL。未設定時は null（CTA非表示）。 */
-export function getRoiSimulatorUrl(): string | null {
-  const raw = process.env.NEXT_PUBLIC_ROI_SIMULATOR_URL?.trim();
+export function getRoiSimulatorUrl(brand: DemoBrand, origin?: string): string | null {
+  const raw = origin?.trim();
   if (!raw) return null;
 
-  const origin = raw.replace(/\/+$/, "");
-  const q = new URLSearchParams(ROI_PARAMS);
-  return `${origin}/?${q.toString()}`;
+  const url = new URL(raw);
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  for (const [key, value] of Object.entries(ROI_PARAMS)) url.searchParams.set(key, value);
+  url.searchParams.set("brand", brand);
+  return url.toString();
 }
